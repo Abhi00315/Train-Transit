@@ -1,26 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:train_transit/components/my_button.dart';
 import 'package:train_transit/components/my_textfield.dart';
-import 'package:train_transit/pages/login/sign_in.dart'; // Import SignInPage
+import 'package:train_transit/pages/login/login_pg.dart'; // Import your login page
+import 'package:train_transit/components/selection/date_picker.dart'; // Import your custom date picker
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
   SignUpPage({super.key});
 
-  final mobileNumberController = TextEditingController();
+  @override
+  _SignUpPageState createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  final fullnameController = TextEditingController();
-  final dobController = TextEditingController();
+  final phoneController = TextEditingController();
+  final emailController = TextEditingController();
+  final panCardController = TextEditingController();
+  final aadharCardController = TextEditingController();
+  final addressController = TextEditingController();
+  final dateController = TextEditingController();
+  String userType = 'Traveller'; // Default user type
 
   void signUserUp(BuildContext context) {
-    // Implement your sign-up logic here
-
-    // After signing up, navigate to the sign-in page
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => SignInPage()),
+      MaterialPageRoute(builder: (context) => LoginPage()),
     );
+  }
+
+  void signUpWithGoogle(BuildContext context) {
+    // Implement Google sign-up logic here
+  }
+
+  void signUpWithPhone(BuildContext context) {
+    // Implement phone number sign-up logic here
   }
 
   @override
@@ -46,10 +61,19 @@ class SignUpPage extends StatelessWidget {
 
                 const SizedBox(height: 25),
 
-                // mobile_number textfield
+                // mobile number textfield
                 MyTextField(
-                  controller: mobileNumberController,
+                  controller: phoneController,
                   hintText: 'Mobile Number',
+                  obscureText: false,
+                ),
+
+                const SizedBox(height: 10),
+
+                // email textfield
+                MyTextField(
+                  controller: emailController,
+                  hintText: 'Email id',
                   obscureText: false,
                 ),
 
@@ -80,14 +104,63 @@ class SignUpPage extends StatelessWidget {
                   obscureText: true,
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 25),
 
-                // fullname textfield
-                MyTextField(
-                  controller: fullnameController,
-                  hintText: 'Full Name',
-                  obscureText: false,
+                // date picker
+                CustomDatePicker(
+                  controller: dateController,
                 ),
+
+                const SizedBox(height: 25),
+
+                // user type radio buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Radio<String>(
+                      value: 'Traveller',
+                      groupValue: userType,
+                      onChanged: (value) {
+                        setState(() {
+                          userType = value!;
+                        });
+                      },
+                    ),
+                    const Text('Traveller'),
+                    const SizedBox(width: 20),
+                    Radio<String>(
+                      value: 'Deliverer',
+                      groupValue: userType,
+                      onChanged: (value) {
+                        setState(() {
+                          userType = value!;
+                        });
+                      },
+                    ),
+                    const Text('Deliverer'),
+                  ],
+                ),
+
+                if (userType == 'Deliverer') ...[
+                  const SizedBox(height: 10),
+                  MyTextField(
+                    controller: panCardController,
+                    hintText: 'PAN CARD No.',
+                    obscureText: false,
+                  ),
+                  const SizedBox(height: 10),
+                  MyTextField(
+                    controller: aadharCardController,
+                    hintText: 'AADHAR CARD No.',
+                    obscureText: false,
+                  ),
+                  const SizedBox(height: 10),
+                  MyTextField(
+                    controller: addressController,
+                    hintText: 'Address',
+                    obscureText: false,
+                  ),
+                ],
 
                 const SizedBox(height: 25),
 
@@ -97,7 +170,7 @@ class SignUpPage extends StatelessWidget {
                   text: 'Sign Up',
                 ),
 
-                const SizedBox(height: 50),
+                const SizedBox(height: 25),
               ],
             ),
           ),
