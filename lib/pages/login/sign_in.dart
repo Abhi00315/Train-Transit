@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:train_transit/components/my_button.dart';
 import 'package:train_transit/components/my_textfield.dart';
-import 'package:train_transit/pages/user_type.dart'; // Import the UserType page
+import 'package:train_transit/pages/user_type.dart'; // Import UserType page (optional)
+import 'package:train_transit/pages/login/sign_up.dart'; // Import SignUpPage
 
 class SignInPage extends StatelessWidget {
   SignInPage({super.key});
@@ -10,10 +11,12 @@ class SignInPage extends StatelessWidget {
   final passwordController = TextEditingController();
 
   void signUserIn(BuildContext context) {
-    Navigator.push(
+    // Implement sign-in logic here (e.g., validate credentials, make API calls)
+    // For example, perform a simulated successful login:
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const UserType()),
-    );
+    ); // Replace with your actual destination if needed
   }
 
   @override
@@ -39,7 +42,7 @@ class SignInPage extends StatelessWidget {
 
               const SizedBox(height: 25),
 
-              // username textfield
+              // Username textfield
               MyTextField(
                 controller: usernameController,
                 hintText: 'Username',
@@ -48,7 +51,7 @@ class SignInPage extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              // password textfield
+              // Password textfield
               MyTextField(
                 controller: passwordController,
                 hintText: 'Password',
@@ -57,7 +60,7 @@ class SignInPage extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              // forgot password?
+              // Forgot password?
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Row(
@@ -73,7 +76,7 @@ class SignInPage extends StatelessWidget {
 
               const SizedBox(height: 25),
 
-              // sign in button
+              // Sign in button
               MyButton(
                 onTap: () => signUserIn(context),
                 text: 'Sign In',
@@ -81,7 +84,7 @@ class SignInPage extends StatelessWidget {
 
               const SizedBox(height: 50),
 
-              // not a member? register now
+              // Not a member? Register now with navigation
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -90,11 +93,17 @@ class SignInPage extends StatelessWidget {
                     style: TextStyle(color: Colors.grey[700]),
                   ),
                   const SizedBox(width: 4),
-                  const Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignUpPage()),
+                    ),
+                    child: const Text(
+                      'Sign Up',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
