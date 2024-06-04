@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:train_transit/pages/delivery_page.dart';
-import 'package:train_transit/pages/booking_page.dart';
-import 'package:train_transit/pages/tracking_page.dart';
+import 'package:train_transit/pages/activity/delivery_page.dart';
+import 'package:train_transit/pages/activity/booking_page.dart';
+import 'package:train_transit/pages/activity/tracking_page.dart';
 import 'package:train_transit/components/my_button.dart';
 
 
