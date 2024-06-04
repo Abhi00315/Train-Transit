@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:train_transit/components/date_picker.dart';
-import 'package:train_transit/components/loc_book.dart';
+import 'package:train_transit/components/selection.dart/date_picker.dart';
+import 'package:train_transit/components/selection.dart/loc_book.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({Key? key}) : super(key: key);
@@ -114,8 +114,23 @@ class BookingPageState extends State<BookingPage> {
                     ),
                   ],
                 ),
-                // Add more widgets if needed
-                // SizedBox(height: 1000), // Example of adding some extra space at the bottom
+                const SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print('Search button pressed');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 20),
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    child: const Text('Search'),
+                  ),
+                ),
               ],
             ),
           ),

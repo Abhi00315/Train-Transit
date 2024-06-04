@@ -13,10 +13,10 @@ class StationDropdown extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _StationDropdownState createState() => _StationDropdownState();
+  StationDropdownState createState() => StationDropdownState();
 }
 
-class _StationDropdownState extends State<StationDropdown> {
+class StationDropdownState extends State<StationDropdown> {
   String? selectedStation;
 
   @override
@@ -33,14 +33,13 @@ class _StationDropdownState extends State<StationDropdown> {
               widget.controller.text = newValue ?? '';
             });
           },
-          items: widget.options
-              .map<DropdownMenuItem<String>>((String value) {
+          items: widget.options.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Text(value),
             );
           }).toList(),
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             filled: true,
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide.none,
@@ -50,7 +49,7 @@ class _StationDropdownState extends State<StationDropdown> {
             ),
           ),
         ),
-        SizedBox(height: 20), // Adjust the spacing between dropdown boxes
+        const SizedBox(height: 20), // Adjust the spacing between dropdown boxes
       ],
     );
   }

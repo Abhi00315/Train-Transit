@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:train_transit/components/loc_book.dart';
+import 'package:train_transit/components/selection.dart/loc_book.dart';
 import 'package:intl/intl.dart';
 
 class DeliveryPage extends StatefulWidget {
   const DeliveryPage({super.key});
 
   @override
-  _DeliveryPageState createState() => _DeliveryPageState();
+  DeliveryPageState createState() => DeliveryPageState();
 }
 
-class _DeliveryPageState extends State<DeliveryPage> {
+class DeliveryPageState extends State<DeliveryPage> {
   DateTime? start;
   DateTime? end;
   TextEditingController fromController = TextEditingController();
@@ -50,7 +50,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                     builder: (BuildContext context, Widget? child) {
                       return Theme(
                         data: ThemeData.light().copyWith(
-                          colorScheme: ColorScheme.light(
+                          colorScheme: const ColorScheme.light(
                             primary: Colors.blueAccent,
                             secondary: const Color.fromARGB(255, 95, 122, 169),
                           ),
@@ -70,7 +70,6 @@ class _DeliveryPageState extends State<DeliveryPage> {
                     });
                   }
                 },
-                child: const Text("Select Date Range"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey,
                   foregroundColor: Colors.white, // Change the text color here
@@ -81,6 +80,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                child: const Text("Select Date Range"),
               ),
             ),
             const SizedBox(height: 16),
@@ -113,6 +113,23 @@ class _DeliveryPageState extends State<DeliveryPage> {
               controller: toController,
               options: trainStations,
               label: 'To',
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  print('Search button pressed');
+                },
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: const Text('Search'),
+              ),
             ),
           ],
         ),
