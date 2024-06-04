@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:train_transit/components/selection.dart/date_picker.dart';
-import 'package:train_transit/components/selection.dart/loc_book.dart';
+import 'package:train_transit/components/selection/date_picker.dart';
+import 'package:train_transit/components/selection/loc_book.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({Key? key}) : super(key: key);

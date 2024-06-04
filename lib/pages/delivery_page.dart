@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:train_transit/components/selection.dart/loc_book.dart';
 import 'package:intl/intl.dart';
+import 'package:train_transit/components/selection/loc_book.dart';
+import 'package:train_transit/pages/train_det/train_info.dart'; // Import the new search results page
 
 class DeliveryPage extends StatefulWidget {
   const DeliveryPage({super.key});
@@ -52,7 +53,7 @@ class DeliveryPageState extends State<DeliveryPage> {
                         data: ThemeData.light().copyWith(
                           colorScheme: const ColorScheme.light(
                             primary: Colors.blueAccent,
-                            secondary: const Color.fromARGB(255, 95, 122, 169),
+                            secondary: Color.fromARGB(255, 95, 122, 169),
                           ),
                           buttonTheme: const ButtonThemeData(
                             textTheme: ButtonTextTheme.primary,
@@ -118,7 +119,10 @@ class DeliveryPageState extends State<DeliveryPage> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  print('Search button pressed');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const TrainInfo()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   padding:
