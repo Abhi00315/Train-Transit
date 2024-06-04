@@ -3,8 +3,8 @@ import 'package:train_transit/components/my_button.dart';
 import 'package:train_transit/components/my_textfield.dart';
 import 'package:train_transit/pages/user_type.dart'; // Import the UserType page
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class SignInPage extends StatelessWidget {
+  SignInPage({super.key});
 
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
