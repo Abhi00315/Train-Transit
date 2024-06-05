@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:train_transit/components/selection/loc_book.dart';
-import 'package:train_transit/pages/train_det/train_info.dart'; // Import the new search results page
+import 'package:train_transit/pages/train_det/del_conf.dart'; // Import the new search results page
 
 class DeliveryPage extends StatefulWidget {
   const DeliveryPage({super.key});
@@ -121,7 +121,9 @@ class DeliveryPageState extends State<DeliveryPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const TrainInfo()),
+                    MaterialPageRoute(
+                      builder: (context) => const DeliveryTrains(),
+                    ),
                   );
                 },
                 style: ElevatedButton.styleFrom(

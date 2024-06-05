@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:train_transit/components/my_button.dart';
 import 'package:train_transit/components/my_textfield.dart';
-import 'package:train_transit/pages/login/login_pg.dart'; // Import your login page
+import 'package:train_transit/pages/login/sign_in.dart'; // Import your sign-in page
 import 'package:train_transit/components/selection/date_picker.dart'; // Import your custom date picker
 
 class SignUpPage extends StatefulWidget {
@@ -24,9 +24,12 @@ class _SignUpPageState extends State<SignUpPage> {
   String userType = 'Traveller'; // Default user type
 
   void signUserUp(BuildContext context) {
+    // Implement the actual sign-up logic here (e.g., validate inputs, make API calls)
+
+    // After successful sign-up, navigate to SignInPage
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
+      MaterialPageRoute(builder: (context) => SignInPage()),
     );
   }
 
