@@ -4,7 +4,7 @@ import 'package:train_transit/pages/login/sign_in.dart';
 import 'package:train_transit/pages/login/sign_up.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({Key? key});
 
   @override
   State<LoginPage> createState() => LoginPageState();
@@ -41,8 +41,14 @@ class LoginPageState extends State<LoginPage> {
                 const EdgeInsets.symmetric(horizontal: 25.0), // Add padding
             child: Column(
               mainAxisAlignment:
-                  MainAxisAlignment.center, // Center buttons vertically
+                  MainAxisAlignment.center, // Center everything vertically
               children: [
+                const Icon(
+                  Icons.train,
+                  size: 120, // Adjust size as needed
+                  color: Colors.black, // Adjust color as needed
+                ),
+                const SizedBox(height: 20),
                 MyButton(
                   text: 'Sign In',
                   onTap: _navigateToSignIn,
