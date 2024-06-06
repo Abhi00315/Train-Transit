@@ -5,7 +5,7 @@ import 'package:train_transit/pages/login/sign_in.dart'; // Import your sign-in 
 import 'package:train_transit/components/selection/date_picker.dart'; // Import your custom date picker
 
 class SignUpPage extends StatefulWidget {
-  SignUpPage({super.key});
+  const SignUpPage({super.key});
 
   @override
   _SignUpPageState createState() => _SignUpPageState();

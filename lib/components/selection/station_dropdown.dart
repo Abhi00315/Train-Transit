@@ -6,11 +6,11 @@ class StationDropdown extends StatefulWidget {
   final String label;
 
   const StationDropdown({
-    Key? key,
+    super.key,
     required this.controller,
     required this.options,
     required this.label,
-  }) : super(key: key);
+  });
 
   @override
   StationDropdownState createState() => StationDropdownState();

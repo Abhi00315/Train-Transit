@@ -4,7 +4,7 @@ import 'package:train_transit/pages/login/sign_in.dart';
 import 'package:train_transit/pages/login/sign_up.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key});
+  const LoginPage({super.key}); // Remove duplicate Key parameter
 
   @override
   State<LoginPage> createState() => LoginPageState();
@@ -21,7 +21,7 @@ class LoginPageState extends State<LoginPage> {
   void _navigateToSignUp() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SignUpPage()),
+      MaterialPageRoute(builder: (context) => const SignUpPage()),
     );
   }
 
@@ -33,20 +33,16 @@ class LoginPageState extends State<LoginPage> {
         title: const Text('Login'),
       ),
       body: Center(
-        // Center the entire content
         child: SingleChildScrollView(
-          // Allow scrolling if content overflows
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 25.0), // Add padding
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Column(
-              mainAxisAlignment:
-                  MainAxisAlignment.center, // Center everything vertically
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.train,
-                  size: 120, // Adjust size as needed
-                  color: Colors.black, // Adjust color as needed
+                  size: 120,
+                  color: Colors.black,
                 ),
                 const SizedBox(height: 20),
                 MyButton(

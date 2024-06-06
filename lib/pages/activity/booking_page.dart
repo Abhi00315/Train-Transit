@@ -3,7 +3,7 @@ import 'package:train_transit/components/selection/loc_book.dart';
 import 'package:train_transit/pages/train_det/train_info.dart';
 
 class BookingPage extends StatefulWidget {
-  const BookingPage({Key? key}) : super(key: key);
+  const BookingPage({super.key});
 
   @override
   BookingPageState createState() => BookingPageState();
@@ -94,7 +94,7 @@ class BookingPageState extends State<BookingPage> {
                     labelText: _selectedDate == null ? 'DATE' : null,
                     hintText: _selectedDate == null ? 'Select Date' : null,
                     filled: true,
-                    fillColor: Color(0xFFE7E0E8),
+                    fillColor: const Color(0xFFE7E0E8),
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(8.0),

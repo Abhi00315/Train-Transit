@@ -4,8 +4,7 @@ import 'package:intl/intl.dart';
 class CustomDatePicker extends StatefulWidget {
   final TextEditingController controller;
 
-  const CustomDatePicker({Key? key, required this.controller})
-      : super(key: key);
+  const CustomDatePicker({super.key, required this.controller});
 
   @override
   CustomDatePickerState createState() => CustomDatePickerState();

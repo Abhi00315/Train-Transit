@@ -9,14 +9,14 @@ class CustomDropdown extends StatefulWidget {
   final IconData? suffixIcon;
 
   const CustomDropdown({
-    Key? key,
+    super.key,
     required this.controller,
     required this.options,
     required this.label,
     this.onSelected,
     this.prefixIcon,
     this.suffixIcon,
-  }) : super(key: key);
+  });
 
   @override
   _CustomDropdownState createState() => _CustomDropdownState();
