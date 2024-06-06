@@ -64,7 +64,7 @@ class BookingPageState extends State<BookingPage> {
     // Navigate to the next page when the search button is clicked
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const TrainInfo()),
+      MaterialPageRoute(builder: (context) => TrainInfo()),
     );
   }
 
