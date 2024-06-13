@@ -1,72 +1,102 @@
 import 'package:flutter/material.dart';
-import 'package:train_transit/pages/payments/ticket_page.dart'; // Correct import for TicketPage
 
-class PaymentPage extends StatelessWidget {
-  final String trainName;
-  final String trainNumber;
-  final String berthPreference;
-  final String passengerName;
-  final String passengerAge;
+class PaymentPage extends StatefulWidget {
+  const PaymentPage({super.key});
 
-  PaymentPage({
-    required this.trainName,
-    required this.trainNumber,
-    required this.berthPreference,
-    required this.passengerName,
-    required this.passengerAge,
-  });
+  @override
+  PaymentPageState createState() => PaymentPageState();
+}
+
+class PaymentPageState extends State<PaymentPage> {
+  TextEditingController amountController = TextEditingController();
+  TextEditingController referenceController = TextEditingController();
+
+  List<String> seatPreferences = [
+    'No Preference',
+    'Lower',
+    'Middle',
+    'Upper',
+    'Side Lower',
+    'Side Upper',
+  ];
+
+  String _selectedPreference = 'No Preference';
 
   @override
   Widget build(BuildContext context) {
-    final passengerNameController = TextEditingController(text: passengerName);
-    final passengerAgeController = TextEditingController(text: passengerAge);
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Payment'),
+        title: const Text('Payment Page'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              decoration: InputDecoration(labelText: 'Passenger Name'),
-              controller: passengerNameController,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: amountController,
+                  decoration: InputDecoration(
+                    labelText: 'Amount',
+                    filled: true,
+                    fillColor: const Color(0xFFE7E0E8),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: referenceController,
+                  decoration: InputDecoration(
+                    labelText: 'Reference Number',
+                    filled: true,
+                    fillColor: const Color(0xFFE7E0E8),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  value: _selectedPreference,
+                  decoration: InputDecoration(
+                    labelText: 'Seat Preference',
+                    filled: true,
+                    fillColor: const Color(0xFFE7E0E8),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  items: seatPreferences.map((String preference) {
+                    return DropdownMenuItem<String>(
+                      value: preference,
+                      child: Text(preference),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedPreference = newValue!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Handle payment submission logic here
+                    },
+                    child: const Text('Submit Payment'),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 20),
-            TextField(
-              decoration: InputDecoration(labelText: 'Passenger Age'),
-              keyboardType: TextInputType.number,
-              controller: passengerAgeController,
-            ),
-            SizedBox(height: 20),
-            Text('Berth Preference: $berthPreference'),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                _navigateToTicketPage(context, passengerNameController.text,
-                    passengerAgeController.text);
-              },
-              child: const Text('Pay Now'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _navigateToTicketPage(BuildContext context, String updatedPassengerName,
-      String updatedPassengerAge) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TicketPage(
-          trainName: trainName,
-          trainNumber: trainNumber,
-          coach: 'AC 2 Tier', // Example coach
-          berth: berthPreference,
-          passengerName: updatedPassengerName,
-          passengerAge: updatedPassengerAge,
+          ),
         ),
       ),
     );
