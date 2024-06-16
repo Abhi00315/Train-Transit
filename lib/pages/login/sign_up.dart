@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:train_transit/components/my_button.dart';
 import 'package:train_transit/components/my_textfield.dart';
-import 'package:train_transit/pages/login/sign_in.dart'; // Import your sign-in page
-import 'package:train_transit/components/selection/date_picker.dart'; // Import your custom date picker
+import 'package:train_transit/components/selection/date_picker.dart';
+import 'package:train_transit/pages/login/login_pg.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -16,21 +18,56 @@ class _SignUpPageState extends State<SignUpPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final phoneController = TextEditingController();
+  final dobController = TextEditingController(); // Controller for DOB
   final emailController = TextEditingController();
   final panCardController = TextEditingController();
   final aadharCardController = TextEditingController();
   final addressController = TextEditingController();
-  final dateController = TextEditingController();
   String userType = 'Traveller'; // Default user type
 
-  void signUserUp(BuildContext context) {
-    // Implement the actual sign-up logic here (e.g., validate inputs, make API calls)
+  void signUserUp(BuildContext context) async {
+    if (passwordController.text.trim() !=
+        confirmPasswordController.text.trim()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
 
-    // After successful sign-up, navigate to SignInPage
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => SignInPage()),
-    );
+    try {
+      // Create user with Firebase Auth
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      // Only store additional details in Firestore if user creation is successful
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'username': usernameController.text.trim(),
+        'phone': phoneController.text.trim(),
+        'dob': dobController.text.trim(),
+        'email': emailController.text.trim(),
+        'userType': userType,
+        if (userType == 'Deliverer') ...{
+          'panCard': panCardController.text.trim(),
+          'aadharCard': aadharCardController.text.trim(),
+          'address': addressController.text.trim(),
+        },
+      });
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to sign up: $e')),
+      );
+    }
   }
 
   void signUpWithGoogle(BuildContext context) {
@@ -107,12 +144,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   obscureText: true,
                 ),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 10),
 
-                // date picker
-                CustomDatePicker(
-                  controller: dateController,
-                ),
+                // date of birth date picker
+                CustomDatePicker(controller: dobController),
 
                 const SizedBox(height: 25),
 

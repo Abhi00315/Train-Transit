@@ -29,7 +29,8 @@ class TrainInfo extends StatelessWidget {
                     children: [
                       Text(
                         'Train Number: ABC123',
-                        style: TextStyle(color: Colors.black,
+                        style: TextStyle(
+                            color: Colors.black,
                             fontSize: 16.0,
                             fontWeight: FontWeight.bold),
                       ),
@@ -126,8 +127,8 @@ class TrainInfo extends StatelessWidget {
     );
   }
 
-  void _showClassAvailabilityDialog(BuildContext context, String className,
-      String availability) {
+  void _showClassAvailabilityDialog(
+      BuildContext context, String className, String availability) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -184,7 +185,8 @@ class TrainInfo extends StatelessWidget {
     );
   }
 }
-  class AvailableClassWidget extends StatelessWidget {
+
+class AvailableClassWidget extends StatelessWidget {
   final String className;
   final int availability;
   final VoidCallback onTap;
@@ -209,18 +211,21 @@ class TrainInfo extends StatelessWidget {
           children: [
             Text(
               className,
-              style: TextStyle(color: Colors.black, fontSize: 16.0), // Changed to black
+              style: TextStyle(
+                  color: Colors.black, fontSize: 16.0), // Changed to black
             ),
             SizedBox(height: 4.0),
             Text(
               'Available: $availability',
-              style: TextStyle(color: Colors.black, fontSize: 14.0), // Changed to black
+              style: TextStyle(
+                  color: Colors.black, fontSize: 14.0), // Changed to black
             ),
             if (availability > 0) ...[
               SizedBox(height: 4.0),
               Text(
                 'Tap to book',
-                style: TextStyle(color: Colors.black, fontSize: 12.0), // Changed to black
+                style: TextStyle(
+                    color: Colors.black, fontSize: 12.0), // Changed to black
               ),
             ],
           ],
@@ -264,8 +269,14 @@ class PaymentPage extends StatelessWidget {
               onChanged: (String? newValue) {
                 // Implement onChanged logic
               },
-              items: <String>['No Preference','Lower', 'Middle', 'Upper', 'Side lower', 'Side upper']
-                  .map<DropdownMenuItem<String>>((String value) {
+              items: <String>[
+                'No Preference',
+                'Lower',
+                'Middle',
+                'Upper',
+                'Side lower',
+                'Side upper'
+              ].map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
