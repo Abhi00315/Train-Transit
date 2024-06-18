@@ -1,62 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:train_transit/components/my_button.dart';
-import 'package:train_transit/components/my_textfield.dart';
-import 'package:train_transit/pages/user_type.dart'; // Import the UserType page
-import 'package:train_transit/pages/login/sign_up.dart'; // Import the SignUpPage
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:train_transit/pages/login/forgot_pwd.dart'; // Import the ForgotPasswordPage
+import 'package:train_transit/pages/login/sign_in.dart';
+import 'package:train_transit/pages/login/sign_up.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
+  @override
+  State<LoginPage> createState() => LoginPageState();
+}
 
-  void signUserIn(BuildContext context) async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: usernameController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const UserType()),
-      );
-    } catch (e) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Invalid Credentials'),
-            content: const Text(
-                'The username or password you entered is incorrect. Please try again.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
-  void goToSignUp(BuildContext context) {
+class LoginPageState extends State<LoginPage> {
+  void _navigateToSignIn() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SignUpPage()),
+      MaterialPageRoute(builder: (context) => SignInPage()),
     );
   }
 
-  void goToForgotPassword(BuildContext context) {
+  void _navigateToSignUp() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) =>
-              ForgotPasswordPage(email: usernameController.text.trim())),
+      MaterialPageRoute(builder: (context) => const SignUpPage()),
     );
   }
 
@@ -64,94 +29,30 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
+      appBar: AppBar(
+        title: const Text('Login'),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 50),
                 const Icon(
                   Icons.train,
                   size: 120,
                   color: Colors.black,
                 ),
-                const SizedBox(height: 50),
-                Text(
-                  'Login Page',
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 25),
-                // username textfield
-                MyTextField(
-                  controller: usernameController,
-                  hintText: 'Username',
-                  obscureText: false,
-                ),
-                const SizedBox(height: 10),
-                // password textfield
-                MyTextField(
-                  controller: passwordController,
-                  hintText: 'Password',
-                  obscureText: true,
-                ),
-                const SizedBox(height: 10),
-                // forgot password?
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          if (usernameController.text.trim().isNotEmpty) {
-                            goToForgotPassword(context);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text('Please enter your email first')),
-                            );
-                          }
-                        },
-                        child: Text(
-                          'Forgot Password?',
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 25),
-                // sign in button
+                const SizedBox(height: 20),
                 MyButton(
-                  onTap: () => signUserIn(context),
                   text: 'Sign In',
+                  onTap: _navigateToSignIn,
                 ),
-                const SizedBox(height: 50),
-                // not a member? register now
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Not a member?',
-                      style: TextStyle(color: Colors.grey[700]),
-                    ),
-                    const SizedBox(width: 4),
-                    GestureDetector(
-                      onTap: () => goToSignUp(context),
-                      child: const Text(
-                        'Sign Up',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 20),
+                MyButton(
+                  text: 'Sign Up',
+                  onTap: _navigateToSignUp,
                 ),
               ],
             ),

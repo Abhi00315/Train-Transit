@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:train_transit/components/selection/date_picker.dart';
 import 'package:train_transit/components/selection/loc_book.dart';
 import 'package:train_transit/pages/train_det/train_info.dart';
 
@@ -13,11 +10,12 @@ class BookingPage extends StatefulWidget {
 }
 
 class BookingPageState extends State<BookingPage> {
-  TextEditingController dateController = TextEditingController();
   TextEditingController fromController = TextEditingController();
   TextEditingController toController = TextEditingController();
   TextEditingController classController = TextEditingController();
   TextEditingController generalController = TextEditingController();
+
+  DateTime? _selectedDate;
 
   // Sample list of train stations in India
   List<String> trainStations = [
@@ -32,6 +30,7 @@ class BookingPageState extends State<BookingPage> {
     'Jaipur',
     'Lucknow',
   ];
+  
   List<String> classOptions = [
     'AC First Class (1A)',
     'AC 2 Tier (2A)',
@@ -48,44 +47,26 @@ class BookingPageState extends State<BookingPage> {
 
   String _travelOption = 'Traveler';
 
-  void searchTrains(BuildContext context) async {
-    try {
-      // Get the current authenticated user
-      User? user = FirebaseAuth.instance.currentUser;
-
-      if (user != null) {
-        // Save booking details to Firestore under the user's document
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .collection('bookings')
-            .add({
-          'date': dateController.text.trim(),
-          'from': fromController.text.trim(),
-          'to': toController.text.trim(),
-          'class': classController.text.trim(),
-          'general': generalController.text.trim(),
-          'travelOption': _travelOption,
-          'timestamp': FieldValue.serverTimestamp(),
-        });
-
-        // Navigate to the next page when the search button is clicked
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => TrainInfo()),
-        );
-      } else {
-        // If the user is not authenticated, show an error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('User not authenticated. Please log in.')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to book: $e')),
-      );
+  void _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(DateTime.now().year + 1),
+    );
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
     }
+  }
+
+  void searchTrains(BuildContext context) {
+    // Navigate to the next page when the search button is clicked
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => TrainInfo()),
+    );
   }
 
   @override
@@ -101,8 +82,31 @@ class BookingPageState extends State<BookingPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 10),
-                CustomDatePicker(controller: dateController),
+                const SizedBox(height: 20),
+                // Date selector
+                TextFormField(
+                  readOnly: true,
+                  controller: TextEditingController(
+                    text: _selectedDate == null
+                        ? ''
+                        : _selectedDate!.toString().substring(0, 10),
+                  ),
+                  decoration: InputDecoration(
+                    labelText: _selectedDate == null ? 'DATE' : null,
+                    hintText: _selectedDate == null ? 'Select Date' : null,
+                    filled: true,
+                    fillColor: const Color(0xFFE7E0E8),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    prefixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: () => _selectDate(context),
+                    ),
+                  ),
+                  onTap: () => _selectDate(context),
+                ),
                 const SizedBox(height: 20),
                 CustomDropdown(
                   controller: fromController,
