@@ -9,10 +9,10 @@ class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({required this.email});
 
   @override
-  _ForgotPasswordPageState createState() => _ForgotPasswordPageState();
+  ForgotPasswordPageState createState() => ForgotPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+class ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final newPasswordController = TextEditingController();
   final confirmNewPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
