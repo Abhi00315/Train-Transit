@@ -28,26 +28,27 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
     });
 
     try {
-      if (newPasswordController.text.trim() == confirmNewPasswordController.text.trim()) {
+      if (newPasswordController.text.trim() ==
+          confirmNewPasswordController.text.trim()) {
         User? user = FirebaseAuth.instance.currentUser;
 
         if (user != null) {
           await user.updatePassword(newPasswordController.text.trim());
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Password updated successfully')),
+            const SnackBar(content: Text('Password updated successfully')),
           );
 
           // Navigate back to the login page
           Navigator.pop(context);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('User not found')),
+            const SnackBar(content: Text('User not found')),
           );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Passwords do not match')),
+          const SnackBar(content: Text('Passwords do not match')),
         );
       }
     } catch (e) {
@@ -105,9 +106,9 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     isLoading
                         ? CircularProgressIndicator()
                         : MyButton(
-                      onTap: resetPassword,
-                      text: 'Reset Password',
-                    ),
+                            onTap: resetPassword,
+                            text: 'Reset Password',
+                          ),
                   ],
                 ),
               ),
