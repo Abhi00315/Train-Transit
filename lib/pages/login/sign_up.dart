@@ -1,35 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:train_transit/components/my_button.dart';
 import 'package:train_transit/components/my_textfield.dart';
-import 'package:train_transit/pages/login/sign_in.dart'; // Import your sign-in page
-import 'package:train_transit/components/selection/date_picker.dart'; // Import your custom date picker
+import 'package:train_transit/components/selection/date_picker.dart';
+import 'package:train_transit/pages/login/login_pg.dart';
 
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+  SignUpPage({super.key});
 
   @override
-  SignUpPageState createState() => SignUpPageState();
+  _SignUpPageState createState() => _SignUpPageState();
 }
 
-class SignUpPageState extends State<SignUpPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final phoneController = TextEditingController();
+  final dobController = TextEditingController(); // Controller for DOB
   final emailController = TextEditingController();
   final panCardController = TextEditingController();
   final aadharCardController = TextEditingController();
   final addressController = TextEditingController();
-  final dateController = TextEditingController();
   String userType = 'Traveller'; // Default user type
 
-  void signUserUp(BuildContext context) {
-    // Implement the actual sign-up logic here (e.g., validate inputs, make API calls)
-    // After successful sign-up, navigate to SignInPage
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => SignInPage()),
-    );
+  void signUserUp(BuildContext context) async {
+    if (passwordController.text.trim() != confirmPasswordController.text.trim()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+
+    try {
+      // Create user with Firebase Auth
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      // Only store additional details in Firestore if user creation is successful
+      await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+        'username': usernameController.text.trim(),
+        'phone': phoneController.text.trim(),
+        'dob': dobController.text.trim(),
+        'email': emailController.text.trim(),
+        'userType': userType,
+        if (userType == 'Deliverer') ...{
+          'panCard': panCardController.text.trim(),
+          'aadharCard': aadharCardController.text.trim(),
+          'address': addressController.text.trim(),
+        },
+      });
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to sign up: $e')),
+      );
+    }
   }
 
   void signUpWithGoogle(BuildContext context) {
@@ -51,6 +84,7 @@ class SignUpPageState extends State<SignUpPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 50),
+
                 Text(
                   'Sign Up',
                   style: TextStyle(
@@ -59,6 +93,7 @@ class SignUpPageState extends State<SignUpPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+
                 const SizedBox(height: 25),
 
                 // mobile number textfield
@@ -67,6 +102,7 @@ class SignUpPageState extends State<SignUpPage> {
                   hintText: 'Mobile Number',
                   obscureText: false,
                 ),
+
                 const SizedBox(height: 10),
 
                 // email textfield
@@ -75,6 +111,7 @@ class SignUpPageState extends State<SignUpPage> {
                   hintText: 'Email id',
                   obscureText: false,
                 ),
+
                 const SizedBox(height: 10),
 
                 // username textfield
@@ -83,6 +120,7 @@ class SignUpPageState extends State<SignUpPage> {
                   hintText: 'Username',
                   obscureText: false,
                 ),
+
                 const SizedBox(height: 10),
 
                 // password textfield
@@ -91,6 +129,7 @@ class SignUpPageState extends State<SignUpPage> {
                   hintText: 'Password',
                   obscureText: true,
                 ),
+
                 const SizedBox(height: 10),
 
                 // confirm password textfield
@@ -99,12 +138,12 @@ class SignUpPageState extends State<SignUpPage> {
                   hintText: 'Confirm Password',
                   obscureText: true,
                 ),
-                const SizedBox(height: 25),
 
-                // date picker
-                CustomDatePicker(
-                  controller: dateController,
-                ),
+                const SizedBox(height: 10),
+
+                // date of birth date picker
+                CustomDatePicker(controller: dobController),
+
                 const SizedBox(height: 25),
 
                 // user type radio buttons
@@ -163,6 +202,7 @@ class SignUpPageState extends State<SignUpPage> {
                   onTap: () => signUserUp(context),
                   text: 'Sign Up',
                 ),
+
                 const SizedBox(height: 25),
               ],
             ),

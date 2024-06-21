@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:train_transit/components/my_button.dart';
 import 'package:train_transit/components/my_textfield.dart';
-import 'package:train_transit/pages/user_type.dart'; // Import UserType page (optional)
-import 'package:train_transit/pages/login/sign_up.dart'; // Import SignUpPage
+import 'package:train_transit/pages/user_type.dart'; // Import the UserType page
+import 'package:train_transit/pages/login/sign_up.dart'; // Import the SignUpPage
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:train_transit/pages/login/forgot_pwd.dart'; // Import the ForgotPasswordPage
 
 class SignInPage extends StatelessWidget {
   SignInPage({super.key});
@@ -10,13 +12,49 @@ class SignInPage extends StatelessWidget {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void signUserIn(BuildContext context) {
-    // Implement sign-in logic here (e.g., validate credentials, make API calls)
-    // For example, perform a simulated successful login:
-    Navigator.pushReplacement(
+  void signUserIn(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: usernameController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const UserType()),
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Invalid Credentials'),
+            content: Text('The username or password you entered is incorrect. Please try again.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  void goToSignUp(BuildContext context) {
+    Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const UserType()),
-    ); // Replace with your actual destination if needed
+      MaterialPageRoute(builder: (context) => SignUpPage()),
+    );
+  }
+
+  void goToForgotPassword(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ForgotPasswordPage(email: usernameController.text.trim())),
+    );
   }
 
   @override
@@ -42,7 +80,7 @@ class SignInPage extends StatelessWidget {
 
               const SizedBox(height: 25),
 
-              // Username textfield
+              // username textfield
               MyTextField(
                 controller: usernameController,
                 hintText: 'Username',
@@ -51,7 +89,7 @@ class SignInPage extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              // Password textfield
+              // password textfield
               MyTextField(
                 controller: passwordController,
                 hintText: 'Password',
@@ -60,15 +98,26 @@ class SignInPage extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              // Forgot password?
+              // forgot password?
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
-                      'Forgot Password?',
-                      style: TextStyle(color: Colors.grey[600]),
+                    GestureDetector(
+                      onTap: () {
+                        if (usernameController.text.trim().isNotEmpty) {
+                          goToForgotPassword(context);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Please enter your email first')),
+                          );
+                        }
+                      },
+                      child: Text(
+                        'Forgot Password?',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
                     ),
                   ],
                 ),
@@ -76,7 +125,7 @@ class SignInPage extends StatelessWidget {
 
               const SizedBox(height: 25),
 
-              // Sign in button
+              // sign in button
               MyButton(
                 onTap: () => signUserIn(context),
                 text: 'Sign In',
@@ -84,7 +133,7 @@ class SignInPage extends StatelessWidget {
 
               const SizedBox(height: 50),
 
-              // Not a member? Register now with navigation
+              // not a member? register now
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -94,10 +143,7 @@ class SignInPage extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignUpPage()),
-                    ),
+                    onTap: () => goToSignUp(context),
                     child: const Text(
                       'Sign Up',
                       style: TextStyle(
