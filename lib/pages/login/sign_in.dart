@@ -9,14 +9,15 @@ import 'package:train_transit/pages/login/forgot_pwd.dart'; // Import the Forgot
 class SignInPage extends StatelessWidget {
   SignInPage({super.key});
 
-  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   void signUserIn(BuildContext context) async {
     try {
       // Try to sign in the user with Firebase Auth
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: usernameController.text.trim(),
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
@@ -101,7 +102,9 @@ class SignInPage extends StatelessWidget {
   void goToForgotPassword(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ForgotPasswordPage(email: usernameController.text.trim())),
+      MaterialPageRoute(
+          builder: (context) =>
+              ForgotPasswordPage(email: emailController.text.trim())),
     );
   }
 
@@ -129,10 +132,10 @@ class SignInPage extends StatelessWidget {
 
                 const SizedBox(height: 25),
 
-                // username textfield
+                // email textfield
                 MyTextField(
-                  controller: usernameController,
-                  hintText: 'Username',
+                  controller: emailController,
+                  hintText: 'Email',
                   obscureText: false,
                 ),
 
@@ -155,11 +158,13 @@ class SignInPage extends StatelessWidget {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          if (usernameController.text.trim().isNotEmpty) {
+                          if (emailController.text.trim().isNotEmpty) {
                             goToForgotPassword(context);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Please enter your email first')),
+                              SnackBar(
+                                  content:
+                                      Text('Please enter your email first')),
                             );
                           }
                         },
