@@ -13,47 +13,34 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  final newPasswordController = TextEditingController();
-  final confirmNewPasswordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
   bool isLoading = false;
 
-  Future<void> resetPassword() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+  @override
+  void initState() {
+    super.initState();
+    emailController.text = widget.email;
+  }
 
+  Future<void> resetPassword() async {
     setState(() {
       isLoading = true;
     });
 
     try {
-      if (newPasswordController.text.trim() ==
-          confirmNewPasswordController.text.trim()) {
-        User? user = FirebaseAuth.instance.currentUser;
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: emailController.text.trim(),
+      );
 
-        if (user != null) {
-          await user.updatePassword(newPasswordController.text.trim());
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password reset email sent successfully')),
+      );
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Password updated successfully')),
-          );
-
-          // Navigate back to the login page
-          Navigator.pop(context);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('User not found')),
-          );
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Passwords do not match')),
-        );
-      }
+      // Navigate back to the login page
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
+        SnackBar(content: Text('Error: ${e.toString()}')),
       );
     }
 
@@ -74,43 +61,31 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 50),
-                    const SizedBox(height: 50),
-                    Text(
-                      'Forgot Password',
-                      style: TextStyle(
-                        color: Colors.grey[700],
-                        fontSize: 16,
-                      ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 50),
+                  Text(
+                    'Forgot Password',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 16,
                     ),
-                    const SizedBox(height: 25),
-                    // new password textfield
-                    MyTextField(
-                      controller: newPasswordController,
-                      hintText: 'New Password',
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: 10),
-                    // confirm new password textfield
-                    MyTextField(
-                      controller: confirmNewPasswordController,
-                      hintText: 'Confirm New Password',
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: 20),
-                    isLoading
-                        ? CircularProgressIndicator()
-                        : MyButton(
-                            onTap: resetPassword,
-                            text: 'Reset Password',
-                          ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 25),
+                  MyTextField(
+                    controller: emailController,
+                    hintText: 'Email',
+                    obscureText: false,
+                  ),
+                  const SizedBox(height: 20),
+                  isLoading
+                      ? CircularProgressIndicator()
+                      : MyButton(
+                          onTap: resetPassword,
+                          text: 'Reset Password',
+                        ),
+                ],
               ),
             ),
           ),
