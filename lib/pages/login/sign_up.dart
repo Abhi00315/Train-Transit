@@ -25,7 +25,24 @@ class _SignUpPageState extends State<SignUpPage> {
   final addressController = TextEditingController();
   String userType = 'Traveller'; // Default user type
 
+  @override
+  void dispose() {
+    // Dispose controllers when the widget is disposed
+    usernameController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    phoneController.dispose();
+    dobController.dispose();
+    emailController.dispose();
+    panCardController.dispose();
+    aadharCardController.dispose();
+    addressController.dispose();
+    super.dispose();
+  }
+
   void signUserUp(BuildContext context) async {
+    if (!validateForm()) return;
+
     if (passwordController.text.trim() != confirmPasswordController.text.trim()) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Passwords do not match')),
@@ -54,15 +71,57 @@ class _SignUpPageState extends State<SignUpPage> {
         },
       });
 
+      // Clear form fields
+      clearForm();
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => LoginPage()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to sign up: $e')),
+        SnackBar(content: Text('Failed to sign up: ${e.toString()}')),
       );
     }
+  }
+
+  bool validateForm() {
+    if (phoneController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        usernameController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty ||
+        dobController.text.isEmpty ||
+        (userType == 'Deliverer' &&
+            (panCardController.text.isEmpty ||
+                aadharCardController.text.isEmpty ||
+                addressController.text.isEmpty))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fill out all required fields')),
+      );
+      return false;
+    }
+
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(emailController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid email format')),
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  void clearForm() {
+    phoneController.clear();
+    emailController.clear();
+    usernameController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
+    dobController.clear();
+    panCardController.clear();
+    aadharCardController.clear();
+    addressController.clear();
   }
 
   void signUpWithGoogle(BuildContext context) {
