@@ -32,6 +32,7 @@ class BookingPageState extends State<BookingPage> {
   ];
 
   List<String> classOptions = [
+    'No preference',
     'AC First Class (1A)',
     'AC 2 Tier (2A)',
     'First Class (FC)',
@@ -41,6 +42,7 @@ class BookingPageState extends State<BookingPage> {
   ];
 
   List<String> generalOptions = [
+    'No preference',
     'Ladies',
     'Duty Pass',
     'Tatkal',
