@@ -17,7 +17,6 @@ class BookingPageState extends State<BookingPage> {
   TextEditingController dateController = TextEditingController();
   TextEditingController fromController = TextEditingController();
   TextEditingController toController = TextEditingController();
-  TextEditingController classController = TextEditingController();
   TextEditingController generalController = TextEditingController();
 
   // List of train stations between Chennai and Madurai
@@ -29,16 +28,6 @@ class BookingPageState extends State<BookingPage> {
     'Tiruchirappalli Junction',
     'Dindigul Junction',
     'Madurai Junction',
-  ];
-
-  List<String> classOptions = [
-    'No preference',
-    'AC First Class (1A)',
-    'AC 2 Tier (2A)',
-    'First Class (FC)',
-    'AC 3 Tier (3A)',
-    'Sleeper',
-    '2S'
   ];
 
   List<String> generalOptions = [
@@ -66,7 +55,6 @@ class BookingPageState extends State<BookingPage> {
           'date': dateController.text.trim(),
           'from': fromController.text.trim(),
           'to': toController.text.trim(),
-          'class': classController.text.trim(),
           'general': generalController.text.trim(),
           'travelOption': _travelOption,
           'timestamp': FieldValue.serverTimestamp(),
@@ -163,14 +151,6 @@ class BookingPageState extends State<BookingPage> {
                     controller: toController,
                     options: trainStations,
                     label: 'To',
-                  ),
-                ),
-                SizedBox(
-                  width: fieldWidth, // Apply constant width
-                  child: CustomDropdown(
-                    controller: classController,
-                    options: classOptions,
-                    label: 'Classes',
                   ),
                 ),
                 SizedBox(

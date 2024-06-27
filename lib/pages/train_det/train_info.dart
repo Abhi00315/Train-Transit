@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:train_transit/pages/payments/pay.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TrainInfo extends StatelessWidget {
   final String fromStation;
@@ -288,12 +290,44 @@ class TrainInfo extends StatelessWidget {
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PaymentPage()),
-                );
+
+                try {
+                  // Get the current authenticated user
+                  User? user = FirebaseAuth.instance.currentUser;
+
+                  if (user != null) {
+                    // Save booking details to Firestore under the user's document
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(user.uid)
+                        .collection(
+                            'classtype') // Store in 'classtype' collection
+                        .add({
+                      'class': className,
+                      'timestamp': FieldValue.serverTimestamp(),
+                    });
+
+                    // Navigate to the payment page after booking
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PaymentPage()),
+                    );
+                  } else {
+                    // If the user is not authenticated, show an error message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content:
+                              Text('User not authenticated. Please log in.')),
+                    );
+                  }
+                } catch (e) {
+                  // Handle errors
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to book: $e')),
+                  );
+                }
               },
               child: Text('Book'),
             ),
