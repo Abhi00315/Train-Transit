@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:train_transit/components/selection/date_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:train_transit/components/selection/loc_book.dart';
 import 'package:train_transit/pages/train_det/train_info.dart';
 
@@ -92,6 +92,21 @@ class BookingPageState extends State<BookingPage> {
     }
   }
 
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null) {
+      setState(() {
+        dateController.text = DateFormat('dd-MM-yyyy').format(picked);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,7 +121,30 @@ class BookingPageState extends State<BookingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 10),
-                CustomDatePicker(controller: dateController),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: SizedBox(
+                    width: double.infinity, // Ensures the TextField takes full width
+                    child: TextField(
+                      controller: dateController,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey.shade400),
+                        ),
+                        fillColor: Color(0xFFE7E0E8),
+                        filled: true,
+                        hintText: 'DATE',
+                        hintStyle: TextStyle(color: Color(0xFF48444F)),
+                        prefixIcon: Icon(Icons.calendar_today, color: Color(0xFF48444F)),
+                      ),
+                      readOnly: true,
+                      onTap: () => _selectDate(context),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 CustomDropdown(
                   controller: fromController,
