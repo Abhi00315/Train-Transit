@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:train_transit/components/selection/loc_book.dart';
 import 'package:train_transit/pages/train_det/train_info.dart';
+import 'package:train_transit/components/my_button.dart'; // Import MyButton here
 
 class BookingPage extends StatefulWidget {
   const BookingPage({Key? key}) : super(key: key);
@@ -109,7 +110,7 @@ class BookingPageState extends State<BookingPage> {
 
   @override
   Widget build(BuildContext context) {
-    const double fieldWidth = 350.0; // Set a constant width for fields
+    const double fieldWidth = 360.0; // Set a constant width for fields
 
     return Scaffold(
       appBar: AppBar(
@@ -212,11 +213,11 @@ class BookingPageState extends State<BookingPage> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                // Search button
+                // Use MyButton instead of ElevatedButton
                 Center(
-                  child: ElevatedButton(
-                    onPressed: () => searchTrains(context),
-                    child: Text('Search Trains'), // Change text as needed
+                  child: MyButton(
+                    onTap: () => searchTrains(context),
+                    text: 'Search Trains',
                   ),
                 ),
               ],
