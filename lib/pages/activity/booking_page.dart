@@ -36,16 +36,14 @@ class BookingPageState extends State<BookingPage> {
     'First Class (FC)',
     'AC 3 Tier (3A)',
     'Sleeper',
-    '2S',
-    'None'
+    '2S'
   ];
 
   List<String> generalOptions = [
     'Ladies',
     'Duty Pass',
     'Tatkal',
-    'Premium Tatkal',
-    'None'
+    'Premium Tatkal'
   ];
 
   String _travelOption = 'Traveler';

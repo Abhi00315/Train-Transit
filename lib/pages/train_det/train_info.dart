@@ -16,8 +16,8 @@ class TrainInfo extends StatelessWidget {
     // Sample data for available trains
     List<Map<String, dynamic>> trains = [
       {
-        'number': 'ABC123',
-        'name': 'XYZ Express',
+        'number': '12637',
+        'name': 'Pandian Express',
         'route': [
           'Chennai Egmore',
           'Villupuram Junction',
@@ -34,8 +34,8 @@ class TrainInfo extends StatelessWidget {
         },
       },
       {
-        'number': 'DEF456',
-        'name': 'PQR Express',
+        'number': '12635',
+        'name': 'Vaigai Superfast Express',
         'route': [
           'Chennai Egmore',
           'Tambaram',
@@ -51,8 +51,8 @@ class TrainInfo extends StatelessWidget {
         },
       },
       {
-        'number': 'GHI789',
-        'name': 'LMN Express',
+        'number': '16105',
+        'name': 'Chendur Express',
         'route': [
           'Chennai Egmore',
           'Chengalpattu Junction',
@@ -69,8 +69,8 @@ class TrainInfo extends StatelessWidget {
         },
       },
       {
-        'number': 'JKL012',
-        'name': 'RST Express',
+        'number': '12083',
+        'name': 'Madurai Jan Shatabdi Express',
         'route': [
           'Chennai Egmore',
           'Tambaram',
@@ -88,8 +88,8 @@ class TrainInfo extends StatelessWidget {
         },
       },
       {
-        'number': 'MNO345',
-        'name': 'UVW Express',
+        'number': '16127',
+        'name': 'Muthunagar Express',
         'route': [
           'Chennai Egmore',
           'Villupuram Junction',
@@ -233,9 +233,7 @@ class TrainInfo extends StatelessWidget {
                                 if (train['availability']['2S'] > 0) {
                                   _showBookTicketDialog(context, '2S');
                                 } else {
-                                  _showClassAvailabilityDialog(
-                                      context,
-                                      '2S',
+                                  _showClassAvailabilityDialog(context, '2S',
                                       train['availability']['2S'].toString());
                                 }
                               },
@@ -344,16 +342,6 @@ class AvailableClassWidget extends StatelessWidget {
                 fontSize: 14.0,
               ),
             ),
-            if (availability > 0) ...[
-              SizedBox(height: 4.0),
-              Text(
-                'Tap to book',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 12.0,
-                ),
-              ),
-            ],
           ],
         ),
       ),
