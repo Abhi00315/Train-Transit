@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:train_transit/components/my_button.dart';
-import 'package:train_transit/components/my_textfield.dart';
+import 'package:train_transit/components/selection/loc_book.dart'; // Import your custom dropdown widget
 
 class PaymentPage extends StatelessWidget {
   @override
@@ -20,40 +20,45 @@ class PaymentPage extends StatelessWidget {
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10.0),
-              MyTextField(
-                controller: TextEditingController(),
-                hintText: 'Passenger Name',
-                obscureText: false,
-              ),
-              SizedBox(height: 10.0),
-              MyTextField(
-                controller: TextEditingController(),
-                hintText: 'Age',
-                obscureText: false,
-              ),
-              SizedBox(height: 10.0),
-              DropdownButtonFormField<String>(
+              TextFormField(
                 decoration: InputDecoration(
-                  labelText: 'Berth Preference',
-                  border: OutlineInputBorder(),
+                  hintText: 'Passenger Name',
+                  filled: true,
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
-                value: 'No Preference', // Default value
-                onChanged: (String? newValue) {
-                  // Implement onChanged logic
-                },
-                items: <String>[
+              ),
+              SizedBox(height: 10.0),
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Age',
+                  filled: true,
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.0),
+              CustomDropdown(
+                controller: TextEditingController(),
+                options: [
                   'No Preference',
                   'Lower',
                   'Middle',
                   'Upper',
                   'Side lower',
                   'Side upper'
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
+                ],
+                label: 'Berth Preference',
+                prefixIcon: Icons.airline_seat_recline_normal,
+                suffixIcon: Icons.keyboard_arrow_down,
               ),
               SizedBox(height: 20.0),
               Text(
@@ -61,21 +66,43 @@ class PaymentPage extends StatelessWidget {
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10.0),
-              MyTextField(
-                controller: TextEditingController(),
-                hintText: 'Card Number',
-                obscureText: false,
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Card Number',
+                  filled: true,
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
               ),
               SizedBox(height: 10.0),
-              MyTextField(
-                controller: TextEditingController(),
-                hintText: 'Expiry Date',
-                obscureText: false,
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Expiry Date',
+                  filled: true,
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
               ),
               SizedBox(height: 10.0),
-              MyTextField(
-                controller: TextEditingController(),
-                hintText: 'CVV',
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'CVV',
+                  filled: true,
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
                 obscureText: true,
               ),
               SizedBox(height: 20.0),
