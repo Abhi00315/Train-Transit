@@ -1,79 +1,74 @@
 import 'package:flutter/material.dart';
 
+// Importing the train stations combinations list
 class TrainInfo extends StatelessWidget {
-  final List<Map<String, dynamic>> trains = [
-    {
-      'trainNumber': '12637',
-      'trainName': 'Pandian Express',
-      'destination': 'Madurai',
-      'classes': {
-        'AC 1 Tier': 5,
-        'AC 2 Tier': 10,
-        'AC 3 Tier': 20,
-        'Sleeper': 50,
-        '2S': 30,
-      }
-    },
-    {
-      'trainNumber': '12631',
-      'trainName': 'Nellai Express',
-      'destination': 'Madurai',
-      'classes': {
-        'AC 1 Tier': 3,
-        'AC 2 Tier': 12,
-        'AC 3 Tier': 25,
-        'Sleeper': 60,
-        '2S': 20,
-      }
-    },
-    {
-      'trainNumber': '12635',
-      'trainName': 'Vaigai Express',
-      'destination': 'Madurai',
-      'classes': {
-        'AC 1 Tier': 4,
-        'AC 2 Tier': 8,
-        'AC 3 Tier': 15,
-        'Sleeper': 45,
-        '2S': 25,
-      }
-    },
-    {
-      'trainNumber': '22623',
-      'trainName': 'Madurai Express',
-      'destination': 'Madurai',
-      'classes': {
-        'AC 1 Tier': 2,
-        'AC 2 Tier': 6,
-        'AC 3 Tier': 18,
-        'Sleeper': 55,
-        '2S': 35,
-      }
-    },
-    {
-      'trainNumber': '12695',
-      'trainName': 'Trichy Express',
-      'destination': 'Madurai',
-      'classes': {
-        'AC 1 Tier': 1,
-        'AC 2 Tier': 9,
-        'AC 3 Tier': 22,
-        'Sleeper': 65,
-        '2S': 28,
-      }
-    },
-  ];
+  final String fromStation;
+  final String toStation;
+
+  const TrainInfo({
+    Key? key,
+    required this.fromStation,
+    required this.toStation,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Sample list of trains (replace this with actual data)
+    final List<Map<String, dynamic>> trains = [
+      {
+        'number': 'ABC123',
+        'name': 'XYZ Express',
+        'route': [
+          'Chennai Egmore',
+          'Villupuram Junction',
+          'Tiruchirappalli Junction',
+          'Dindigul Junction',
+          'Madurai Junction'
+        ],
+        'availability': {
+          'AC 1 Tier': 50,
+          'AC 2 Tier': 30,
+          'AC 3 Tier': 100,
+          'Sleeper': 80,
+          '2S': 20,
+        },
+      },
+      {
+        'number': 'DEF456',
+        'name': 'PQR Express',
+        'route': [
+          'Chennai Egmore',
+          'Tambaram',
+          'Villupuram Junction',
+          'Tiruchirappalli Junction'
+        ],
+        'availability': {
+          'AC 1 Tier': 40,
+          'AC 2 Tier': 25,
+          'AC 3 Tier': 90,
+          'Sleeper': 70,
+          '2S': 15,
+        },
+      },
+      // Add more train details here
+    ];
+
+    // Filter trains based on the selected stations
+    final filteredTrains = trains.where((train) {
+      final route = train['route'] as List<String>;
+      final fromIndex = route.indexOf(fromStation);
+      final toIndex = route.indexOf(toStation);
+      return fromIndex != -1 && toIndex != -1 && fromIndex < toIndex;
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Available Trains'),
       ),
       body: ListView.builder(
-        itemCount: trains.length,
+        itemCount: filteredTrains.length,
         itemBuilder: (context, index) {
-          var train = trains[index];
+          final train = filteredTrains[index];
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -92,43 +87,41 @@ class TrainInfo extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Train Number: ${train['trainNumber']}',
+                        'Train Number: ${train['number']}',
                         style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold),
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       SizedBox(height: 8.0),
                       Text(
-                        'Train Name: ${train['trainName']}',
+                        'Train Name: ${train['name']}',
                         style: TextStyle(color: Colors.black, fontSize: 16.0),
                       ),
                       SizedBox(height: 8.0),
                       Text(
-                        'Destination: ${train['destination']}',
+                        'Route: ${train['route'].join(' -> ')}',
                         style: TextStyle(color: Colors.black, fontSize: 16.0),
                       ),
                       SizedBox(height: 16.0),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
-                          children: train['classes'].entries.map<Widget>((entry) {
-                            String className = entry.key;
-                            int availability = entry.value;
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: AvailableClassWidget(
-                                className: className,
-                                availability: availability,
-                                onTap: () {
-                                  if (availability > 0) {
-                                    _showBookTicketDialog(context, className);
-                                  } else {
-                                    _showClassAvailabilityDialog(
-                                        context, className, availability.toString());
-                                  }
-                                },
-                              ),
+                          children: train['availability']
+                              .entries
+                              .map<Widget>((entry) {
+                            return AvailableClassWidget(
+                              className: entry.key,
+                              availability: entry.value,
+                              onTap: () {
+                                if (entry.value > 0) {
+                                  _showBookTicketDialog(context, entry.key);
+                                } else {
+                                  _showClassAvailabilityDialog(context,
+                                      entry.key, entry.value.toString());
+                                }
+                              },
                             );
                           }).toList(),
                         ),
@@ -150,14 +143,14 @@ class TrainInfo extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Availability in $className'),
-          content: Text('Seats Available: $availability'),
-          actions: [
+          title: Text('Availability'),
+          content: Text('$className is available with $availability seats.'),
+          actions: <Widget>[
             TextButton(
+              child: Text('Close'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close'),
             ),
           ],
         );
@@ -171,31 +164,24 @@ class TrainInfo extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Book Ticket'),
-          content: Text('Would you like to book a ticket for $className?'),
-          actions: [
+          content: Text('Do you want to book a ticket in $className?'),
+          actions: <Widget>[
             TextButton(
+              child: Text('No'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
             ),
             TextButton(
+              child: Text('Yes'),
               onPressed: () {
+                // Add booking logic here
                 Navigator.of(context).pop();
-                _navigateToPaymentPage(context);
               },
-              child: Text('Book'),
             ),
           ],
         );
       },
-    );
-  }
-
-  void _navigateToPaymentPage(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => PaymentPage()),
     );
   }
 }
@@ -206,107 +192,28 @@ class AvailableClassWidget extends StatelessWidget {
   final VoidCallback onTap;
 
   const AvailableClassWidget({
+    Key? key,
     required this.className,
     required this.availability,
     required this.onTap,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          color: Colors.grey,
-        ),
-        child: Column(
-          children: [
-            Text(
-              className,
-              style: TextStyle(
-                  color: Colors.black, fontSize: 16.0),
-            ),
-            SizedBox(height: 4.0),
-            Text(
-              'Available: $availability',
-              style: TextStyle(
-                  color: Colors.black, fontSize: 14.0),
-            ),
-            if (availability > 0) ...[
-              SizedBox(height: 4.0),
-              Text(
-                'Tap to book',
-                style: TextStyle(
-                    color: Colors.black, fontSize: 12.0),
-              ),
-            ],
-          ],
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Chip(
+          label: Text('$className: $availability'),
+          backgroundColor: availability > 0 ? Colors.green : Colors.red,
+          labelStyle: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
   }
 }
 
-class PaymentPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Payment'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Passenger Name',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Age',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 20),
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                labelText: 'Berth Preference',
-                border: OutlineInputBorder(),
-              ),
-              value: 'No Preference',
-              onChanged: (String? newValue) {
-                // Implement onChanged logic
-              },
-              items: <String>[
-                'No Preference',
-                'Lower',
-                'Middle',
-                'Upper',
-                'Side lower',
-                'Side upper'
-              ].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Implement payment logic
-              },
-              child: Text('Pay Now'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

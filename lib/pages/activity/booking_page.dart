@@ -19,24 +19,24 @@ class BookingPageState extends State<BookingPage> {
   TextEditingController classController = TextEditingController();
   TextEditingController generalController = TextEditingController();
 
-  // Sample list of train stations in India
+  // List of train stations between Chennai and Madurai
   List<String> trainStations = [
-    'New Delhi',
-    'Mumbai',
-    'Chennai',
-    'Kolkata',
-    'Bangalore',
-    'Hyderabad',
-    'Ahmedabad',
-    'Pune',
-    'Jaipur',
-    'Lucknow',
+    'Chennai Egmore',
+    'Tambaram',
+    'Chengalpattu Junction',
+    'Villupuram Junction',
+    'Tiruchirappalli Junction',
+    'Dindigul Junction',
+    'Madurai Junction',
   ];
+
   List<String> classOptions = [
     'AC First Class (1A)',
     'AC 2 Tier (2A)',
     'First Class (FC)',
     'AC 3 Tier (3A)',
+    'Sleeper',
+    '2S'
   ];
 
   List<String> generalOptions = [
@@ -72,7 +72,12 @@ class BookingPageState extends State<BookingPage> {
         // Navigate to the next page when the search button is clicked
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => TrainInfo()),
+          MaterialPageRoute(
+            builder: (context) => TrainInfo(
+              fromStation: fromController.text.trim(),
+              toStation: toController.text.trim(),
+            ),
+          ),
         );
       } else {
         // If the user is not authenticated, show an error message
