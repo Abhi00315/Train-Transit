@@ -1,6 +1,69 @@
 import 'package:flutter/material.dart';
 
 class TrainInfo extends StatelessWidget {
+  final List<Map<String, dynamic>> trains = [
+    {
+      'trainNumber': '12637',
+      'trainName': 'Pandian Express',
+      'destination': 'Madurai',
+      'classes': {
+        'AC 1 Tier': 5,
+        'AC 2 Tier': 10,
+        'AC 3 Tier': 20,
+        'Sleeper': 50,
+        '2S': 30,
+      }
+    },
+    {
+      'trainNumber': '12631',
+      'trainName': 'Nellai Express',
+      'destination': 'Madurai',
+      'classes': {
+        'AC 1 Tier': 3,
+        'AC 2 Tier': 12,
+        'AC 3 Tier': 25,
+        'Sleeper': 60,
+        '2S': 20,
+      }
+    },
+    {
+      'trainNumber': '12635',
+      'trainName': 'Vaigai Express',
+      'destination': 'Madurai',
+      'classes': {
+        'AC 1 Tier': 4,
+        'AC 2 Tier': 8,
+        'AC 3 Tier': 15,
+        'Sleeper': 45,
+        '2S': 25,
+      }
+    },
+    {
+      'trainNumber': '22623',
+      'trainName': 'Madurai Express',
+      'destination': 'Madurai',
+      'classes': {
+        'AC 1 Tier': 2,
+        'AC 2 Tier': 6,
+        'AC 3 Tier': 18,
+        'Sleeper': 55,
+        '2S': 35,
+      }
+    },
+    {
+      'trainNumber': '12695',
+      'trainName': 'Trichy Express',
+      'destination': 'Madurai',
+      'classes': {
+        'AC 1 Tier': 1,
+        'AC 2 Tier': 9,
+        'AC 3 Tier': 22,
+        'Sleeper': 65,
+        '2S': 28,
+      }
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -8,8 +71,9 @@ class TrainInfo extends StatelessWidget {
         title: Text('Available Trains'),
       ),
       body: ListView.builder(
-        itemCount: 5, // Replace with the actual number of available trains
+        itemCount: trains.length,
         itemBuilder: (context, index) {
+          var train = trains[index];
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -28,7 +92,7 @@ class TrainInfo extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Train Number: ABC123',
+                        'Train Number: ${train['trainNumber']}',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 16.0,
@@ -36,84 +100,37 @@ class TrainInfo extends StatelessWidget {
                       ),
                       SizedBox(height: 8.0),
                       Text(
-                        'Train Name: XYZ Express',
+                        'Train Name: ${train['trainName']}',
                         style: TextStyle(color: Colors.black, fontSize: 16.0),
                       ),
                       SizedBox(height: 8.0),
                       Text(
-                        'Destination: Destination Name',
+                        'Destination: ${train['destination']}',
                         style: TextStyle(color: Colors.black, fontSize: 16.0),
                       ),
                       SizedBox(height: 16.0),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
-                          children: [
-                            AvailableClassWidget(
-                              className: 'AC 1 Tier',
-                              availability: 50,
-                              onTap: () {
-                                if (50 > 0) {
-                                  _showBookTicketDialog(context, 'AC 1 Tier');
-                                } else {
-                                  _showClassAvailabilityDialog(
-                                      context, 'AC 1 Tier', '50');
-                                }
-                              },
-                            ),
-                            SizedBox(width: 8.0),
-                            AvailableClassWidget(
-                              className: 'AC 2 Tier',
-                              availability: 30,
-                              onTap: () {
-                                if (30 > 0) {
-                                  _showBookTicketDialog(context, 'AC 2 Tier');
-                                } else {
-                                  _showClassAvailabilityDialog(
-                                      context, 'AC 2 Tier', '30');
-                                }
-                              },
-                            ),
-                            SizedBox(width: 8.0),
-                            AvailableClassWidget(
-                              className: 'AC 3 Tier',
-                              availability: 100,
-                              onTap: () {
-                                if (100 > 0) {
-                                  _showBookTicketDialog(context, 'AC 3 Tier');
-                                } else {
-                                  _showClassAvailabilityDialog(
-                                      context, 'AC 3 Tier', '100');
-                                }
-                              },
-                            ),
-                            SizedBox(width: 8.0),
-                            AvailableClassWidget(
-                              className: 'Sleeper',
-                              availability: 80,
-                              onTap: () {
-                                if (80 > 0) {
-                                  _showBookTicketDialog(context, 'Sleeper');
-                                } else {
-                                  _showClassAvailabilityDialog(
-                                      context, 'Sleeper', '80');
-                                }
-                              },
-                            ),
-                            SizedBox(width: 8.0),
-                            AvailableClassWidget(
-                              className: '2S',
-                              availability: 20,
-                              onTap: () {
-                                if (20 > 0) {
-                                  _showBookTicketDialog(context, '2S');
-                                } else {
-                                  _showClassAvailabilityDialog(
-                                      context, '2S', '20');
-                                }
-                              },
-                            ),
-                          ],
+                          children: train['classes'].entries.map<Widget>((entry) {
+                            String className = entry.key;
+                            int availability = entry.value;
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: AvailableClassWidget(
+                                className: className,
+                                availability: availability,
+                                onTap: () {
+                                  if (availability > 0) {
+                                    _showBookTicketDialog(context, className);
+                                  } else {
+                                    _showClassAvailabilityDialog(
+                                        context, className, availability.toString());
+                                  }
+                                },
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ),
                     ],
@@ -148,7 +165,6 @@ class TrainInfo extends StatelessWidget {
     );
   }
 
-  // Inside the _showBookTicketDialog method
   void _showBookTicketDialog(BuildContext context, String className) {
     showDialog(
       context: context,
@@ -165,10 +181,8 @@ class TrainInfo extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                // Navigate to the payment page
                 Navigator.of(context).pop();
-                _navigateToPaymentPage(
-                    context); // Call function to navigate to payment page
+                _navigateToPaymentPage(context);
               },
               child: Text('Book'),
             ),
@@ -205,27 +219,27 @@ class AvailableClassWidget extends StatelessWidget {
         padding: EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
-          color: Colors.grey, // Changed to grey
+          color: Colors.grey,
         ),
         child: Column(
           children: [
             Text(
               className,
               style: TextStyle(
-                  color: Colors.black, fontSize: 16.0), // Changed to black
+                  color: Colors.black, fontSize: 16.0),
             ),
             SizedBox(height: 4.0),
             Text(
               'Available: $availability',
               style: TextStyle(
-                  color: Colors.black, fontSize: 14.0), // Changed to black
+                  color: Colors.black, fontSize: 14.0),
             ),
             if (availability > 0) ...[
               SizedBox(height: 4.0),
               Text(
                 'Tap to book',
                 style: TextStyle(
-                    color: Colors.black, fontSize: 12.0), // Changed to black
+                    color: Colors.black, fontSize: 12.0),
               ),
             ],
           ],
@@ -265,7 +279,7 @@ class PaymentPage extends StatelessWidget {
                 labelText: 'Berth Preference',
                 border: OutlineInputBorder(),
               ),
-              value: 'No Preference', // Default value
+              value: 'No Preference',
               onChanged: (String? newValue) {
                 // Implement onChanged logic
               },
