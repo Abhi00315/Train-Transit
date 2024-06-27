@@ -109,6 +109,8 @@ class BookingPageState extends State<BookingPage> {
 
   @override
   Widget build(BuildContext context) {
+    const double fieldWidth = 350.0; // Set a constant width for fields
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Booking'),
@@ -121,50 +123,60 @@ class BookingPageState extends State<BookingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: SizedBox(
-                    width: double.infinity, // Ensures the TextField takes full width
-                    child: TextField(
-                      controller: dateController,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey.shade400),
-                        ),
-                        fillColor: Color(0xFFE7E0E8),
-                        filled: true,
-                        hintText: 'DATE',
-                        hintStyle: TextStyle(color: Color(0xFF48444F)),
-                        prefixIcon: Icon(Icons.calendar_today, color: Color(0xFF48444F)),
+                SizedBox(
+                  width: fieldWidth, // Apply constant width
+                  child: TextField(
+                    controller: dateController,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
                       ),
-                      readOnly: true,
-                      onTap: () => _selectDate(context),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey.shade400),
+                      ),
+                      fillColor: Color(0xFFE7E0E8),
+                      filled: true,
+                      hintText: 'DATE',
+                      hintStyle: TextStyle(color: Color(0xFF48444F)),
+                      prefixIcon:
+                          Icon(Icons.calendar_today, color: Color(0xFF48444F)),
                     ),
+                    readOnly: true,
+                    onTap: () => _selectDate(context),
                   ),
                 ),
                 const SizedBox(height: 20),
-                CustomDropdown(
-                  controller: fromController,
-                  options: trainStations,
-                  label: 'From',
+                SizedBox(
+                  width: fieldWidth, // Apply constant width
+                  child: CustomDropdown(
+                    controller: fromController,
+                    options: trainStations,
+                    label: 'From',
+                  ),
                 ),
-                CustomDropdown(
-                  controller: toController,
-                  options: trainStations,
-                  label: 'To',
+                SizedBox(
+                  width: fieldWidth, // Apply constant width
+                  child: CustomDropdown(
+                    controller: toController,
+                    options: trainStations,
+                    label: 'To',
+                  ),
                 ),
-                CustomDropdown(
-                  controller: classController,
-                  options: classOptions,
-                  label: 'Classes',
+                SizedBox(
+                  width: fieldWidth, // Apply constant width
+                  child: CustomDropdown(
+                    controller: classController,
+                    options: classOptions,
+                    label: 'Classes',
+                  ),
                 ),
-                CustomDropdown(
-                  controller: generalController,
-                  options: generalOptions,
-                  label: 'General',
+                SizedBox(
+                  width: fieldWidth, // Apply constant width
+                  child: CustomDropdown(
+                    controller: generalController,
+                    options: generalOptions,
+                    label: 'General',
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Row(
