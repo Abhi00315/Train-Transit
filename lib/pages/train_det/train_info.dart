@@ -3,7 +3,7 @@ import 'package:train_transit/pages/payments/pay.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class TrainInfo extends StatelessWidget {
+class TrainInfo extends StatefulWidget {
   final String fromStation;
   final String toStation;
 
@@ -12,6 +12,13 @@ class TrainInfo extends StatelessWidget {
     required this.fromStation,
     required this.toStation,
   }) : super(key: key);
+
+  @override
+  _TrainInfoState createState() => _TrainInfoState();
+}
+
+class _TrainInfoState extends State<TrainInfo> {
+  bool _isBooking = false;
 
   @override
   Widget build(BuildContext context) {
@@ -111,8 +118,8 @@ class TrainInfo extends StatelessWidget {
     // Filter trains based on the selected stations
     final filteredTrains = trains.where((train) {
       final route = train['route'] as List<String>;
-      final fromIndex = route.indexOf(fromStation);
-      final toIndex = route.indexOf(toStation);
+      final fromIndex = route.indexOf(widget.fromStation);
+      final toIndex = route.indexOf(widget.toStation);
       return fromIndex != -1 && toIndex != -1 && fromIndex < toIndex;
     }).toList();
 
@@ -291,45 +298,51 @@ class TrainInfo extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.of(context).pop();
+                if (!_isBooking) {
+                  setState(() {
+                    _isBooking = true;
+                  });
 
-                try {
-                  // Get the current authenticated user
-                  User? user = FirebaseAuth.instance.currentUser;
+                  Navigator.of(context).pop();
 
-                  if (user != null) {
-                    // Save booking details to Firestore under the user's document
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(user.uid)
-                        .collection(
-                            'classtype') // Store in 'classtype' collection
-                        .add({
-                      'class': className,
-                      'timestamp': FieldValue.serverTimestamp(),
+                  try {
+                    // Get the current authenticated user
+                    User? user = FirebaseAuth.instance.currentUser;
+                    if (user != null) {
+                      // Save the booking details to Firestore
+                      await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(user.uid)
+                          .collection('booking')
+                          .add({
+                        'trainNumber': '12637', // Sample train number
+                        'classType': className,
+                        'fromStation': widget.fromStation,
+                        'toStation': widget.toStation,
+                        'bookingDate': Timestamp.now(),
+                      });
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentPage(),
+                        ),
+                      );
+                    } else {
+                      // Handle the case when the user is not authenticated
+                      print('User not authenticated');
+                    }
+                  } catch (e) {
+                    // Handle any errors that occur during saving to Firestore
+                    print('Error saving booking details: $e');
+                  } finally {
+                    setState(() {
+                      _isBooking = false;
                     });
-
-                    // Navigate to the payment page after booking
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => PaymentPage()),
-                    );
-                  } else {
-                    // If the user is not authenticated, show an error message
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content:
-                              Text('User not authenticated. Please log in.')),
-                    );
                   }
-                } catch (e) {
-                  // Handle errors
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to book: $e')),
-                  );
                 }
               },
-              child: Text('Book'),
+              child: Text('Confirm'),
             ),
           ],
         );
@@ -344,37 +357,32 @@ class AvailableClassWidget extends StatelessWidget {
   final VoidCallback onTap;
 
   const AvailableClassWidget({
+    Key? key,
     required this.className,
     required this.availability,
     required this.onTap,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(8.0),
+        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         decoration: BoxDecoration(
+          color: Colors.blue,
           borderRadius: BorderRadius.circular(10.0),
-          color: Colors.grey, // Changed to grey
         ),
         child: Column(
           children: [
             Text(
               className,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16.0,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: 16.0),
             ),
             SizedBox(height: 4.0),
             Text(
-              'Available: $availability',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14.0,
-              ),
+              'Availability: $availability',
+              style: TextStyle(color: Colors.white, fontSize: 12.0),
             ),
           ],
         ),
