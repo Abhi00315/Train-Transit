@@ -96,8 +96,13 @@ class _PaymentPageState extends State<PaymentPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Passenger Information',
+                'Passenger Details',
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10.0),
+              Text(
+                'Passenger Count',
+                style: TextStyle(fontSize: 16.0),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
