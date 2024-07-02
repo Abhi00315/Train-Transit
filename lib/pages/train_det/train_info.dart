@@ -176,7 +176,8 @@ class _TrainInfoState extends State<TrainInfo> {
                               availability: train['availability']['AC 1 Tier'],
                               onTap: () {
                                 if (train['availability']['AC 1 Tier'] > 0) {
-                                  _showBookTicketDialog(context, 'AC 1 Tier');
+                                  _showBookTicketDialog(
+                                      context, train, 'AC 1 Tier');
                                 } else {
                                   _showClassAvailabilityDialog(
                                       context,
@@ -192,7 +193,8 @@ class _TrainInfoState extends State<TrainInfo> {
                               availability: train['availability']['AC 2 Tier'],
                               onTap: () {
                                 if (train['availability']['AC 2 Tier'] > 0) {
-                                  _showBookTicketDialog(context, 'AC 2 Tier');
+                                  _showBookTicketDialog(
+                                      context, train, 'AC 2 Tier');
                                 } else {
                                   _showClassAvailabilityDialog(
                                       context,
@@ -208,7 +210,8 @@ class _TrainInfoState extends State<TrainInfo> {
                               availability: train['availability']['AC 3 Tier'],
                               onTap: () {
                                 if (train['availability']['AC 3 Tier'] > 0) {
-                                  _showBookTicketDialog(context, 'AC 3 Tier');
+                                  _showBookTicketDialog(
+                                      context, train, 'AC 3 Tier');
                                 } else {
                                   _showClassAvailabilityDialog(
                                       context,
@@ -224,7 +227,8 @@ class _TrainInfoState extends State<TrainInfo> {
                               availability: train['availability']['Sleeper'],
                               onTap: () {
                                 if (train['availability']['Sleeper'] > 0) {
-                                  _showBookTicketDialog(context, 'Sleeper');
+                                  _showBookTicketDialog(
+                                      context, train, 'Sleeper');
                                 } else {
                                   _showClassAvailabilityDialog(
                                       context,
@@ -240,7 +244,7 @@ class _TrainInfoState extends State<TrainInfo> {
                               availability: train['availability']['2S'],
                               onTap: () {
                                 if (train['availability']['2S'] > 0) {
-                                  _showBookTicketDialog(context, '2S');
+                                  _showBookTicketDialog(context, train, '2S');
                                 } else {
                                   _showClassAvailabilityDialog(context, '2S',
                                       train['availability']['2S'].toString());
@@ -267,14 +271,15 @@ class _TrainInfoState extends State<TrainInfo> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Availability in $className'),
-          content: Text('Seats Available: $availability'),
+          title: Text('Class Availability'),
+          content:
+              Text('$className is not available. Availability: $availability'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close'),
+              child: Text('OK'),
             ),
           ],
         );
@@ -282,7 +287,8 @@ class _TrainInfoState extends State<TrainInfo> {
     );
   }
 
-  void _showBookTicketDialog(BuildContext context, String className) {
+  void _showBookTicketDialog(
+      BuildContext context, Map<String, dynamic> train, String className) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -303,8 +309,6 @@ class _TrainInfoState extends State<TrainInfo> {
                     _isBooking = true;
                   });
 
-                  Navigator.of(context).pop();
-
                   try {
                     // Get the current authenticated user
                     User? user = FirebaseAuth.instance.currentUser;
@@ -313,15 +317,20 @@ class _TrainInfoState extends State<TrainInfo> {
                       await FirebaseFirestore.instance
                           .collection('users')
                           .doc(user.uid)
-                          .collection('booking')
+                          .collection('bookings')
                           .add({
-                        'trainNumber': '12637', // Sample train number
-                        'classType': className,
                         'fromStation': widget.fromStation,
                         'toStation': widget.toStation,
                         'bookingDate': Timestamp.now(),
+                        'trainNumber': train['number'],
+                        'trainName': train['name'],
+                        'classType': className,
                       });
 
+                      // Pop the dialog
+                      Navigator.of(context).pop();
+
+                      // Navigate to PaymentPage
                       Navigator.push(
                         context,
                         MaterialPageRoute(
