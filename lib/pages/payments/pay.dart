@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:train_transit/components/my_button.dart';
 import 'package:train_transit/components/selection/loc_book.dart'; // Import your custom dropdown widget
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PaymentPage extends StatefulWidget {
   @override
@@ -8,77 +10,80 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  // Focus nodes and controllers will be stored in lists to handle multiple passengers
-  List<FocusNode> _nameFocusNodes = [];
-  List<FocusNode> _ageFocusNodes = [];
-  List<TextEditingController> _nameControllers = [];
-  List<TextEditingController> _ageControllers = [];
-  int _numPassengers = 1;
-
+  // Focus nodes for managing focus state of text fields
+  FocusNode _nameFocus = FocusNode();
+  FocusNode _ageFocus = FocusNode();
   FocusNode _cardNumberFocus = FocusNode();
   FocusNode _expiryDateFocus = FocusNode();
   FocusNode _cvvFocus = FocusNode();
 
+  // Controllers for text fields
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
   TextEditingController _cardNumberController = TextEditingController();
   TextEditingController _expiryDateController = TextEditingController();
   TextEditingController _cvvController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    // Initialize with one passenger
-    _initializePassengerControllers();
-  }
+  bool _isProcessing = false;
+  bool _isTermsAccepted = false;
 
   @override
   void dispose() {
     // Clean up focus nodes and controllers
-    for (var node in _nameFocusNodes) {
-      node.dispose();
-    }
-    for (var node in _ageFocusNodes) {
-      node.dispose();
-    }
-    for (var controller in _nameControllers) {
-      controller.dispose();
-    }
-    for (var controller in _ageControllers) {
-      controller.dispose();
-    }
+    _nameFocus.dispose();
+    _ageFocus.dispose();
     _cardNumberFocus.dispose();
     _expiryDateFocus.dispose();
     _cvvFocus.dispose();
+    _nameController.dispose();
+    _ageController.dispose();
     _cardNumberController.dispose();
     _expiryDateController.dispose();
     _cvvController.dispose();
     super.dispose();
   }
 
-  void _initializePassengerControllers() {
-    _nameFocusNodes = List.generate(_numPassengers, (index) => FocusNode());
-    _ageFocusNodes = List.generate(_numPassengers, (index) => FocusNode());
-    _nameControllers = List.generate(_numPassengers, (index) => TextEditingController());
-    _ageControllers = List.generate(_numPassengers, (index) => TextEditingController());
-  }
-
-  void _addPassenger() {
+  Future<void> _processPayment() async {
+    if (_isProcessing) return;
     setState(() {
-      _numPassengers++;
-      _nameFocusNodes.add(FocusNode());
-      _ageFocusNodes.add(FocusNode());
-      _nameControllers.add(TextEditingController());
-      _ageControllers.add(TextEditingController());
+      _isProcessing = true;
     });
-  }
 
-  void _removePassenger() {
-    if (_numPassengers > 1) {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('payments')
+            .add({
+          'name': _nameController.text,
+          'age': _ageController.text,
+          'cardNumber': _cardNumberController.text,
+          'expiryDate': _expiryDateController.text,
+          'cvv': _cvvController.text,
+          'timestamp': Timestamp.now(),
+        });
+
+        // Payment success logic here
+        // ...
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Payment successful!')),
+        );
+      } else {
+        // Handle the case when the user is not authenticated
+        print('User not authenticated');
+      }
+    } catch (e) {
+      // Handle any errors that occur during saving to Firestore
+      print('Error saving payment details: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Payment failed. Please try again.')),
+      );
+    } finally {
       setState(() {
-        _numPassengers--;
-        _nameFocusNodes.removeLast().dispose();
-        _ageFocusNodes.removeLast().dispose();
-        _nameControllers.removeLast().dispose();
-        _ageControllers.removeLast().dispose();
+        _isProcessing = false;
       });
     }
   }
@@ -100,67 +105,42 @@ class _PaymentPageState extends State<PaymentPage> {
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10.0),
-              Text(
-                'Passenger Count',
-                style: TextStyle(fontSize: 16.0),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.remove),
-                    onPressed: _removePassenger,
+              TextFormField(
+                controller: _nameController,
+                focusNode: _nameFocus,
+                decoration: InputDecoration(
+                  hintText: 'Passenger Name',
+                  filled: true,
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                  Text('$_numPassengers'),
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: _addPassenger,
+                  floatingLabelBehavior:
+                      FloatingLabelBehavior.auto, // Floating label behavior
+                  labelText: 'Passenger Name', // Label text
+                ),
+              ),
+              SizedBox(height: 10.0),
+              TextFormField(
+                controller: _ageController,
+                focusNode: _ageFocus,
+                decoration: InputDecoration(
+                  hintText: 'Age',
+                  filled: true,
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                ],
+                  floatingLabelBehavior:
+                      FloatingLabelBehavior.auto, // Floating label behavior
+                  labelText: 'Age', // Label text
+                ),
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: _numPassengers,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      TextFormField(
-                        controller: _nameControllers[index],
-                        focusNode: _nameFocusNodes[index],
-                        decoration: InputDecoration(
-                          hintText: 'Passenger Name',
-                          filled: true,
-                          fillColor: Color(0xFFE7E0E8),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          floatingLabelBehavior: FloatingLabelBehavior.auto,
-                          labelText: 'Passenger Name',
-                        ),
-                      ),
-                      SizedBox(height: 10.0),
-                      TextFormField(
-                        controller: _ageControllers[index],
-                        focusNode: _ageFocusNodes[index],
-                        decoration: InputDecoration(
-                          hintText: 'Age',
-                          filled: true,
-                          fillColor: Color(0xFFE7E0E8),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          floatingLabelBehavior: FloatingLabelBehavior.auto,
-                          labelText: 'Age',
-                        ),
-                      ),
-                      SizedBox(height: 10.0),
-                    ],
-                  );
-                },
-              ),
+              SizedBox(height: 10.0),
               CustomDropdown(
                 controller: TextEditingController(),
                 options: [
@@ -187,13 +167,15 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'Card Number',
                   filled: true,
-                  fillColor: Color(0xFFE7E0E8),
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  labelText: 'Card Number',
+                  floatingLabelBehavior:
+                      FloatingLabelBehavior.auto, // Floating label behavior
+                  labelText: 'Card Number', // Label text
                 ),
               ),
               SizedBox(height: 10.0),
@@ -203,13 +185,15 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'Expiry Date',
                   filled: true,
-                  fillColor: Color(0xFFE7E0E8),
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  labelText: 'Expiry Date',
+                  floatingLabelBehavior:
+                      FloatingLabelBehavior.auto, // Floating label behavior
+                  labelText: 'Expiry Date', // Label text
                 ),
               ),
               SizedBox(height: 10.0),
@@ -219,13 +203,15 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'CVV',
                   filled: true,
-                  fillColor: Color(0xFFE7E0E8),
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  labelText: 'CVV',
+                  floatingLabelBehavior:
+                      FloatingLabelBehavior.auto, // Floating label behavior
+                  labelText: 'CVV', // Label text
                 ),
                 obscureText: true,
               ),
@@ -233,9 +219,11 @@ class _PaymentPageState extends State<PaymentPage> {
               Row(
                 children: [
                   Checkbox(
-                    value: false, // Replace with actual state management
+                    value: _isTermsAccepted,
                     onChanged: (bool? value) {
-                      // Implement onChanged logic
+                      setState(() {
+                        _isTermsAccepted = value ?? false;
+                      });
                     },
                   ),
                   Text(
@@ -246,10 +234,8 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
               SizedBox(height: 20.0),
               MyButton(
-                onTap: () {
-                  // Implement payment logic
-                },
-                text: 'Pay Now',
+                onTap: _isTermsAccepted && !_isProcessing ? _processPayment : null,
+                text: _isProcessing ? 'Processing...' : 'Pay Now',
               ),
             ],
           ),
