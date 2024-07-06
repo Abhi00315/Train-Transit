@@ -317,7 +317,7 @@ class _TrainInfoState extends State<TrainInfo> {
                       await FirebaseFirestore.instance
                           .collection('users')
                           .doc(user.uid)
-                          .collection('bookings')
+                          .collection('train_pref')
                           .add({
                         'fromStation': widget.fromStation,
                         'toStation': widget.toStation,
