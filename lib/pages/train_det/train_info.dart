@@ -310,31 +310,31 @@ class _TrainInfoState extends State<TrainInfo> {
                   });
 
                   try {
+                    // Get the current authenticated user
                     User? user = FirebaseAuth.instance.currentUser;
                     if (user != null) {
-                      // Add a new document to the bookings collection and get its ID
-                      DocumentReference bookingRef = await FirebaseFirestore
-                          .instance
+                      // Save the booking details to Firestore
+                      await FirebaseFirestore.instance
                           .collection('users')
                           .doc(user.uid)
-                          .collection('train_pref')
+                          .collection('bookings')
                           .add({
                         'fromStation': widget.fromStation,
                         'toStation': widget.toStation,
+                        'bookingDate': Timestamp.now(),
                         'trainNumber': train['number'],
                         'trainName': train['name'],
-                        'className': className,
-                        'timestamp': Timestamp.now(),
+                        'classType': className,
                       });
 
-                      String bookingId = bookingRef.id;
+                      // Pop the dialog
+                      Navigator.of(context).pop();
 
+                      // Navigate to PaymentPage
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PaymentPage(
-                            bookingId: bookingId,
-                          ),
+                          builder: (context) => PaymentPage(),
                         ),
                       );
                     } else {
@@ -342,7 +342,8 @@ class _TrainInfoState extends State<TrainInfo> {
                       print('User not authenticated');
                     }
                   } catch (e) {
-                    print('Error booking ticket: $e');
+                    // Handle any errors that occur during saving to Firestore
+                    print('Error saving booking details: $e');
                   } finally {
                     setState(() {
                       _isBooking = false;
@@ -350,7 +351,7 @@ class _TrainInfoState extends State<TrainInfo> {
                   }
                 }
               },
-              child: Text('Book'),
+              child: Text('Confirm'),
             ),
           ],
         );
@@ -376,20 +377,21 @@ class AvailableClassWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15.0),
-          color: availability > 0 ? Colors.green : Colors.red,
+          color: Colors.blue,
+          borderRadius: BorderRadius.circular(10.0),
         ),
         child: Column(
           children: [
             Text(
               className,
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.white, fontSize: 16.0),
             ),
+            SizedBox(height: 4.0),
             Text(
-              'Available: $availability',
-              style: TextStyle(color: Colors.white),
+              'Availability: $availability',
+              style: TextStyle(color: Colors.white, fontSize: 12.0),
             ),
           ],
         ),

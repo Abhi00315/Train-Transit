@@ -5,10 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PaymentPage extends StatefulWidget {
-  final String bookingId;
-
-  const PaymentPage({Key? key, required this.bookingId}) : super(key: key);
-
   @override
   _PaymentPageState createState() => _PaymentPageState();
 }
@@ -27,7 +23,6 @@ class _PaymentPageState extends State<PaymentPage> {
   TextEditingController _cardNumberController = TextEditingController();
   TextEditingController _expiryDateController = TextEditingController();
   TextEditingController _cvvController = TextEditingController();
-  TextEditingController _berthPreferenceController = TextEditingController();
 
   bool _isProcessing = false;
   bool _isTermsAccepted = false;
@@ -45,7 +40,6 @@ class _PaymentPageState extends State<PaymentPage> {
     _cardNumberController.dispose();
     _expiryDateController.dispose();
     _cvvController.dispose();
-    _berthPreferenceController.dispose();
     super.dispose();
   }
 
@@ -61,13 +55,10 @@ class _PaymentPageState extends State<PaymentPage> {
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
-            .collection('bookings')
-            .doc(widget.bookingId)
             .collection('payments')
             .add({
           'name': _nameController.text,
           'age': _ageController.text,
-          'berthPreference': _berthPreferenceController.text,
           'cardNumber': _cardNumberController.text,
           'expiryDate': _expiryDateController.text,
           'cvv': _cvvController.text,
@@ -120,12 +111,14 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'Passenger Name',
                   filled: true,
-                  fillColor: Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior: FloatingLabelBehavior.auto, // Floating label behavior
+                  floatingLabelBehavior:
+                      FloatingLabelBehavior.auto, // Floating label behavior
                   labelText: 'Passenger Name', // Label text
                 ),
               ),
@@ -136,18 +129,20 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'Age',
                   filled: true,
-                  fillColor: Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior: FloatingLabelBehavior.auto, // Floating label behavior
+                  floatingLabelBehavior:
+                      FloatingLabelBehavior.auto, // Floating label behavior
                   labelText: 'Age', // Label text
                 ),
               ),
               SizedBox(height: 10.0),
               CustomDropdown(
-                controller: _berthPreferenceController,
+                controller: TextEditingController(),
                 options: [
                   'No Preference',
                   'Lower',
@@ -172,12 +167,14 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'Card Number',
                   filled: true,
-                  fillColor: Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior: FloatingLabelBehavior.auto, // Floating label behavior
+                  floatingLabelBehavior:
+                      FloatingLabelBehavior.auto, // Floating label behavior
                   labelText: 'Card Number', // Label text
                 ),
               ),
@@ -188,12 +185,14 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'Expiry Date',
                   filled: true,
-                  fillColor: Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior: FloatingLabelBehavior.auto, // Floating label behavior
+                  floatingLabelBehavior:
+                      FloatingLabelBehavior.auto, // Floating label behavior
                   labelText: 'Expiry Date', // Label text
                 ),
               ),
@@ -204,12 +203,14 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'CVV',
                   filled: true,
-                  fillColor: Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  fillColor:
+                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior: FloatingLabelBehavior.auto, // Floating label behavior
+                  floatingLabelBehavior:
+                      FloatingLabelBehavior.auto, // Floating label behavior
                   labelText: 'CVV', // Label text
                 ),
                 obscureText: true,
