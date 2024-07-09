@@ -3,6 +3,7 @@ import 'package:train_transit/components/my_button.dart';
 import 'package:train_transit/components/selection/loc_book.dart'; // Import your custom dropdown widget
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:train_transit/pages/user_type.dart'; // Import the UserType page
 
 class PaymentPage extends StatefulWidget {
   @override
@@ -70,6 +71,13 @@ class _PaymentPageState extends State<PaymentPage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Payment successful!')),
+        );
+
+        // Navigate to UserType page after a delay
+        await Future.delayed(Duration(seconds: 2));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const UserType()),
         );
       } else {
         // Handle the case when the user is not authenticated
@@ -243,4 +251,4 @@ class _PaymentPageState extends State<PaymentPage> {
       ),
     );
   }
-}
+}/////////////////////////////////////

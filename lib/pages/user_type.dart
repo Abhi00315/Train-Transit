@@ -3,7 +3,7 @@ import 'package:train_transit/pages/activity/delivery_page.dart';
 import 'package:train_transit/pages/activity/booking_page.dart';
 import 'package:train_transit/pages/activity/tracking_page.dart';
 import 'package:train_transit/components/my_button.dart';
-
+import 'package:train_transit/components/selection/appbar.dart';
 
 class UserType extends StatelessWidget {
   const UserType({super.key});
@@ -19,9 +19,7 @@ class UserType extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      appBar: AppBar(
-        title: const Text('User Type'),
-      ),
+      appBar: const CustomAppBar(title: 'User Type'),
       body: SafeArea(
         child: Center(
           child: Column(
