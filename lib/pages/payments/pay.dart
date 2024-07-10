@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:train_transit/components/my_button.dart';
-import 'package:train_transit/components/selection/loc_book.dart'; // Import your custom dropdown widget
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:train_transit/pages/user_type.dart'; // Import the UserType page
+import 'package:train_transit/pages/user_type.dart';
+import 'package:train_transit/components/selection/utils.dart';
 
 class PaymentPage extends StatefulWidget {
   @override
@@ -27,6 +27,17 @@ class _PaymentPageState extends State<PaymentPage> {
 
   bool _isProcessing = false;
   bool _isTermsAccepted = false;
+
+  String _selectedBerthPreference = 'No Preference'; // Default value
+
+  List<String> _berthPreferences = [
+    'No Preference',
+    'Lower',
+    'Middle',
+    'Upper',
+    'Side lower',
+    'Side upper'
+  ];
 
   @override
   void dispose() {
@@ -53,16 +64,22 @@ class _PaymentPageState extends State<PaymentPage> {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
+        // Generate a new unique ID for the payment
+        String paymentId = generateUniqueId();
+
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .collection('payments')
-            .add({
+            .doc(paymentId) // Use the generated unique ID
+            .set({
+          'id': paymentId, // Store the ID as part of the document data
           'name': _nameController.text,
           'age': _ageController.text,
           'cardNumber': _cardNumberController.text,
           'expiryDate': _expiryDateController.text,
           'cvv': _cvvController.text,
+          'berthPreference': _selectedBerthPreference,
           'timestamp': Timestamp.now(),
         });
 
@@ -119,15 +136,13 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'Passenger Name',
                   filled: true,
-                  fillColor:
-                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  fillColor: Color(0xFFE7E0E8),
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior:
-                      FloatingLabelBehavior.auto, // Floating label behavior
-                  labelText: 'Passenger Name', // Label text
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  labelText: 'Passenger Name',
                 ),
               ),
               SizedBox(height: 10.0),
@@ -137,31 +152,42 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'Age',
                   filled: true,
-                  fillColor:
-                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  fillColor: Color(0xFFE7E0E8),
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior:
-                      FloatingLabelBehavior.auto, // Floating label behavior
-                  labelText: 'Age', // Label text
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  labelText: 'Age',
                 ),
               ),
+              SizedBox(height: 20.0),
+              Text(
+                'Berth Preference',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              ),
               SizedBox(height: 10.0),
-              CustomDropdown(
-                controller: TextEditingController(),
-                options: [
-                  'No Preference',
-                  'Lower',
-                  'Middle',
-                  'Upper',
-                  'Side lower',
-                  'Side upper'
-                ],
-                label: 'Berth Preference',
-                prefixIcon: Icons.airline_seat_recline_normal,
-                suffixIcon: Icons.keyboard_arrow_down,
+              DropdownButtonFormField<String>(
+                value: _selectedBerthPreference,
+                items: _berthPreferences.map((String berth) {
+                  return DropdownMenuItem<String>(
+                    value: berth,
+                    child: Text(berth),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedBerthPreference = value ?? 'No Preference';
+                  });
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Color(0xFFE7E0E8),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
               ),
               SizedBox(height: 20.0),
               Text(
@@ -175,15 +201,13 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'Card Number',
                   filled: true,
-                  fillColor:
-                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  fillColor: Color(0xFFE7E0E8),
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior:
-                      FloatingLabelBehavior.auto, // Floating label behavior
-                  labelText: 'Card Number', // Label text
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  labelText: 'Card Number',
                 ),
               ),
               SizedBox(height: 10.0),
@@ -193,15 +217,13 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'Expiry Date',
                   filled: true,
-                  fillColor:
-                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  fillColor: Color(0xFFE7E0E8),
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior:
-                      FloatingLabelBehavior.auto, // Floating label behavior
-                  labelText: 'Expiry Date', // Label text
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  labelText: 'Expiry Date',
                 ),
               ),
               SizedBox(height: 10.0),
@@ -211,15 +233,13 @@ class _PaymentPageState extends State<PaymentPage> {
                 decoration: InputDecoration(
                   hintText: 'CVV',
                   filled: true,
-                  fillColor:
-                      Color(0xFFE7E0E8), // Set background color to #E7E0E8
+                  fillColor: Color(0xFFE7E0E8),
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  floatingLabelBehavior:
-                      FloatingLabelBehavior.auto, // Floating label behavior
-                  labelText: 'CVV', // Label text
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  labelText: 'CVV',
                 ),
                 obscureText: true,
               ),
@@ -251,4 +271,4 @@ class _PaymentPageState extends State<PaymentPage> {
       ),
     );
   }
-}/////////////////////////////////////
+}

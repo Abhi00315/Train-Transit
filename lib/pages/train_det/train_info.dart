@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:train_transit/pages/payments/pay.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:train_transit/components/selection/utils.dart'; // Import the utils file
 
 class TrainInfo extends StatefulWidget {
   final String fromStation;
@@ -288,82 +289,86 @@ class _TrainInfoState extends State<TrainInfo> {
   }
 
   void _showBookTicketDialog(
-    BuildContext context, Map<String, dynamic> train, String className) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Book Ticket'),
-        content: Text('Would you like to book a ticket for $className?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              if (!_isBooking) {
-                setState(() {
-                  _isBooking = true;
-                });
-
-                try {
-                  // Get the current authenticated user
-                  User? user = FirebaseAuth.instance.currentUser;
-                  if (user != null) {
-                    // Reference to Firestore instance
-                    FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-                    // Reference to the user's document
-                    DocumentReference userRef =
-                        firestore.collection('users').doc(user.uid);
-
-                    // Save train preferences under 'train_pref' sub-collection of the user's document
-                    DocumentReference trainPrefRef = userRef
-                        .collection('train_pref')
-                        .doc(); // Define trainPrefRef
-
-                    await trainPrefRef.set({
-                      'trainName': train['name'],
-                      'trainNumber': train['number'],
-                      'classType': className,
-                      // Add other relevant train preference details here
-                    });
-
-                    // Pop the dialog
-                    Navigator.of(context).pop();
-
-                    // Navigate to PaymentPage or any other page as needed
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PaymentPage(),
-                      ),
-                    );
-                  } else {
-                    // Handle the case when the user is not authenticated
-                    print('User not authenticated');
-                  }
-                } catch (e) {
-                  // Handle any errors that occur during saving to Firestore
-                  print('Error saving train preferences: $e');
-                } finally {
+      BuildContext context, Map<String, dynamic> train, String className) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Book Ticket'),
+          content: Text('Would you like to book a ticket for $className?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (!_isBooking) {
                   setState(() {
-                    _isBooking = false;
+                    _isBooking = true;
                   });
-                }
-              }
-            },
-            child: Text('Confirm'),
-          ),
-        ],
-      );
-    },
-  );
-}
 
+                  try {
+                    // Get the current authenticated user
+                    User? user = FirebaseAuth.instance.currentUser;
+                    if (user != null) {
+                      // Reference to Firestore instance
+                      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+                      // Reference to the user's document
+                      DocumentReference userRef =
+                          firestore.collection('users').doc(user.uid);
+
+                      // Generate a new unique ID for the train preferences
+                      String trainPrefId = generateUniqueId();
+
+                      // Save train preferences under 'train_pref' sub-collection of the user's document
+                      DocumentReference trainPrefRef = userRef
+                          .collection('train_pref')
+                          .doc(trainPrefId); // Use the generated unique ID
+
+                      await trainPrefRef.set({
+                        'id':
+                            trainPrefId, // Store the ID as part of the document data
+                        'trainName': train['name'],
+                        'trainNumber': train['number'],
+                        'classType': className,
+                        // Add other relevant train preference details here
+                      });
+
+                      // Pop the dialog
+                      Navigator.of(context).pop();
+
+                      // Navigate to PaymentPage or any other page as needed
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentPage(),
+                        ),
+                      );
+                    } else {
+                      // Handle the case when the user is not authenticated
+                      print('User not authenticated');
+                    }
+                  } catch (e) {
+                    // Handle any errors that occur during saving to Firestore
+                    print('Error saving train preferences: $e');
+                  } finally {
+                    setState(() {
+                      _isBooking = false;
+                    });
+                  }
+                }
+              },
+              child: Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class AvailableClassWidget extends StatelessWidget {
