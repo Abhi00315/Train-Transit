@@ -288,95 +288,99 @@ class _TrainInfoState extends State<TrainInfo> {
   }
 
   void _showBookTicketDialog(
-  BuildContext context, Map<String, dynamic> train, String className) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Book Ticket'),
-        content: Text('Would you like to book a ticket for $className?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              if (!_isBooking) {
-                setState(() {
-                  _isBooking = true;
-                });
-
-                try {
-                  // Get the current authenticated user
-                  User? user = FirebaseAuth.instance.currentUser;
-                  if (user != null) {
-                    // Reference to Firestore instance
-                    FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-                    // Reference to the user's document
-                    DocumentReference userRef = firestore.collection('users').doc(user.uid);
-
-                    // Generate a new unique ID for the booking
-                    String bookingId = userRef.collection('bookings').doc().id;
-
-                    // Save the booking details to Firestore
-                    await userRef.collection('bookings').doc(bookingId).set({
-                      'id': bookingId,
-                      'fromStation': widget.fromStation,
-                      'toStation': widget.toStation,
-                      'bookingDate': Timestamp.now(),
-                      'trainNumber': train['number'],
-                      'trainName': train['name'],
-                    });
-
-                    // Reference to the new booking document
-                    DocumentReference bookingRef = userRef.collection('bookings').doc(bookingId);
-
-                    // Save train preferences under 'train_pref' sub-collection of the booking document
-                    DocumentReference trainPrefRef = bookingRef.collection('train_pref').doc(); // Define trainPrefRef
-
-                    await trainPrefRef.set({
-                      'trainName': train['name'],
-                      'trainNumber': train['number'],
-                      'classType': className,
-                      // Add other relevant train preference details here
-                    });
-
-                    // Pop the dialog
-                    Navigator.of(context).pop();
-
-                    // Navigate to PaymentPage or any other page as needed
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PaymentPage(),
-                      ),
-                    );
-                  } else {
-                    // Handle the case when the user is not authenticated
-                    print('User not authenticated');
-                  }
-                } catch (e) {
-                  // Handle any errors that occur during saving to Firestore
-                  print('Error saving booking details: $e');
-                } finally {
+      BuildContext context, Map<String, dynamic> train, String className) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Book Ticket'),
+          content: Text('Would you like to book a ticket for $className?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (!_isBooking) {
                   setState(() {
-                    _isBooking = false;
+                    _isBooking = true;
                   });
-                }
-              }
-            },
-            child: Text('Confirm'),
-          ),
-        ],
-      );
-    },
-  );
-}
 
+                  try {
+                    // Get the current authenticated user
+                    User? user = FirebaseAuth.instance.currentUser;
+                    if (user != null) {
+                      // Reference to Firestore instance
+                      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+                      // Reference to the user's document
+                      DocumentReference userRef =
+                          firestore.collection('users').doc(user.uid);
+
+                      // Generate a new unique ID for the booking
+                      String bookingId =
+                          userRef.collection('bookings').doc().id;
+
+                      // Save the booking details to Firestore
+                      await userRef.collection('bookings').doc(bookingId).set({
+                        'id': bookingId,
+                        'fromStation': widget.fromStation,
+                        'toStation': widget.toStation,
+                        'bookingDate': Timestamp.now(),
+                        'trainNumber': train['number'],
+                        'trainName': train['name'],
+                      });
+
+                      // Reference to the new booking document
+                      DocumentReference bookingRef =
+                          userRef.collection('bookings').doc(bookingId);
+
+                      // Save train preferences under 'train_pref' sub-collection of the booking document
+                      DocumentReference trainPrefRef = bookingRef
+                          .collection('train_pref')
+                          .doc(); // Define trainPrefRef
+
+                      await trainPrefRef.set({
+                        'trainName': train['name'],
+                        'trainNumber': train['number'],
+                        'classType': className,
+                        // Add other relevant train preference details here
+                      });
+
+                      // Pop the dialog
+                      Navigator.of(context).pop();
+
+                      // Navigate to PaymentPage or any other page as needed
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentPage(),
+                        ),
+                      );
+                    } else {
+                      // Handle the case when the user is not authenticated
+                      print('User not authenticated');
+                    }
+                  } catch (e) {
+                    // Handle any errors that occur during saving to Firestore
+                    print('Error saving booking details: $e');
+                  } finally {
+                    setState(() {
+                      _isBooking = false;
+                    });
+                  }
+                }
+              },
+              child: Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class AvailableClassWidget extends StatelessWidget {
