@@ -1,5 +1,3 @@
-// BookingPage.dart
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -59,26 +57,43 @@ class BookingPageState extends State<BookingPage> {
         String bookingId = generateUniqueId();
 
         // Save booking details to Firestore under the user's document
-        await userRef.collection('bookings').doc(bookingId).set({
-          'id': bookingId, // Store the ID as part of the document data
-          'date': dateController.text.trim(),
-          'from': fromController.text.trim(),
-          'to': toController.text.trim(),
-          'general': generalController.text.trim(),
-          'travelOption': _travelOption,
-          'timestamp': FieldValue.serverTimestamp(),
-        });
+        DocumentReference bookingRef =
+            userRef.collection('bookings').doc(bookingId);
 
-        // Navigate to the next page when the search button is clicked
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TrainInfo(
-              fromStation: fromController.text.trim(),
-              toStation: toController.text.trim(),
+        await firestore.runTransaction((transaction) async {
+          transaction.set(bookingRef, {
+            'id': bookingId, // Store the ID as part of the document data
+            'date': dateController.text.trim(),
+            'from': fromController.text.trim(),
+            'to': toController.text.trim(),
+            'general': generalController.text.trim(),
+            'travelOption': _travelOption,
+            'timestamp': FieldValue.serverTimestamp(),
+          });
+
+          // Save train preferences under 'train_pref' sub-collection
+          String trainPrefId = generateUniqueId();
+          DocumentReference trainPrefRef =
+              bookingRef.collection('train_pref').doc(trainPrefId);
+
+          transaction.set(trainPrefRef, {
+            'id': trainPrefId,
+            'trainStations': [fromController.text.trim(), toController.text.trim()],
+            'general': generalController.text.trim(),
+            'timestamp': FieldValue.serverTimestamp(),
+          });
+
+          // Navigate to the next page when the search button is clicked
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TrainInfo(
+                fromStation: fromController.text.trim(),
+                toStation: toController.text.trim(),
+              ),
             ),
-          ),
-        );
+          );
+        });
       } else {
         // If the user is not authenticated, show an error message
         ScaffoldMessenger.of(context).showSnackBar(
@@ -219,3 +234,4 @@ class BookingPageState extends State<BookingPage> {
     );
   }
 }
+
