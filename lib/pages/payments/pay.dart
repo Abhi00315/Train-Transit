@@ -67,12 +67,20 @@ class _PaymentPageState extends State<PaymentPage> {
         // Generate a new unique ID for the payment
         String paymentId = generateUniqueId();
 
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .collection('payments')
-            .doc(paymentId) // Use the generated unique ID
-            .set({
+        // Reference to Firestore instance
+        FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+        // Reference to the user's document
+        DocumentReference userRef = firestore.collection('users').doc(user.uid);
+
+        // Get the latest train preference document
+        QuerySnapshot trainPrefsSnapshot = await userRef.collection('train_pref').limit(1).get();
+        DocumentSnapshot trainPrefDoc = trainPrefsSnapshot.docs.first;
+
+        // Save payment details under 'payments' sub-collection of the train_pref document
+        DocumentReference paymentRef = trainPrefDoc.reference.collection('payments').doc(paymentId);
+
+        await paymentRef.set({
           'id': paymentId, // Store the ID as part of the document data
           'name': _nameController.text,
           'age': _ageController.text,
