@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:train_transit/pages/payments/pay.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:train_transit/pages/payments/pay.dart';
 import 'package:train_transit/components/selection/utils.dart'; // Import the utils file
 
 class TrainInfo extends StatefulWidget {
