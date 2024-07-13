@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:train_transit/components/my_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:train_transit/pages/user_type.dart';
-import 'package:train_transit/components/selection/utils.dart';
+import 'package:train_transit/pages/user_type.dart'; // Update with your actual import path
+import 'package:train_transit/components/my_button.dart'; // Update with your actual import path
+import 'package:train_transit/components/selection/utils.dart'; // Update with your actual import path
 
 class PaymentPage extends StatefulWidget {
   @override
@@ -73,8 +73,12 @@ class _PaymentPageState extends State<PaymentPage> {
         // Reference to the user's document
         DocumentReference userRef = firestore.collection('users').doc(user.uid);
 
-        // Get the latest train preference document
-        QuerySnapshot trainPrefsSnapshot = await userRef.collection('train_pref').limit(1).get();
+        // Get the latest booking document
+        QuerySnapshot bookingsSnapshot = await userRef.collection('bookings').limit(1).get();
+        DocumentSnapshot bookingDoc = bookingsSnapshot.docs.first;
+
+        // Get the latest train preference document within the booking
+        QuerySnapshot trainPrefsSnapshot = await bookingDoc.reference.collection('train_pref').limit(1).get();
         DocumentSnapshot trainPrefDoc = trainPrefsSnapshot.docs.first;
 
         // Save payment details under 'payments' sub-collection of the train_pref document
@@ -168,6 +172,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                   labelText: 'Age',
                 ),
+                keyboardType: TextInputType.number,
               ),
               SizedBox(height: 20.0),
               Text(
@@ -217,6 +222,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                   labelText: 'Card Number',
                 ),
+                keyboardType: TextInputType.number,
               ),
               SizedBox(height: 10.0),
               TextFormField(
@@ -250,6 +256,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   labelText: 'CVV',
                 ),
                 obscureText: true,
+                keyboardType: TextInputType.number,
               ),
               SizedBox(height: 20.0),
               Row(
