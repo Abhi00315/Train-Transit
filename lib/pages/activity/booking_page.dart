@@ -71,7 +71,6 @@ class BookingPageState extends State<BookingPage> {
             'timestamp': FieldValue.serverTimestamp(),
           });
 
-          // Save train preferences under 'train_pref' sub-collection
           String trainPrefId = generateUniqueId();
           DocumentReference trainPrefRef =
               bookingRef.collection('train_pref').doc(trainPrefId);
