@@ -330,8 +330,7 @@ class _TrainInfoState extends State<TrainInfo> {
                           .doc(trainPrefId); // Use the generated unique ID
 
                       await trainPrefRef.set({
-                        'id':
-                            trainPrefId, // Store the ID as part of the document data
+                        'id': trainPrefId, // Store the ID as part of the document data
                         'trainName': train['name'],
                         'trainNumber': train['number'],
                         'classType': className,
