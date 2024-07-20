@@ -43,26 +43,17 @@ class BookingPageState extends State<BookingPage> {
 
   void searchTrains(BuildContext context) async {
   try {
-    // Get the current authenticated user
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      // Reference to the Firestore instance
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-      // Reference to the user's document
       DocumentReference userRef = firestore.collection('users').doc(user.uid);
-
-      // Generate a new unique ID for the booking
       String bookingId = generateUniqueId();
-
-      // Save booking details to Firestore under the user's document
-      DocumentReference bookingRef =
-          userRef.collection('bookings').doc(bookingId);
+      DocumentReference bookingRef = userRef.collection('bookings').doc(bookingId);
 
       await firestore.runTransaction((transaction) async {
+        // Set the booking document
         transaction.set(bookingRef, {
-          'id': bookingId, // Store the ID as part of the document data
           'date': dateController.text.trim(),
           'from': fromController.text.trim(),
           'to': toController.text.trim(),
@@ -71,7 +62,7 @@ class BookingPageState extends State<BookingPage> {
           'timestamp': FieldValue.serverTimestamp(),
         });
 
-        // Navigate to the next page when the search button is clicked
+        // Navigate to the next page
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -83,7 +74,6 @@ class BookingPageState extends State<BookingPage> {
         );
       });
     } else {
-      // If the user is not authenticated, show an error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('User not authenticated. Please log in.')),
       );
@@ -94,6 +84,8 @@ class BookingPageState extends State<BookingPage> {
     );
   }
 }
+
+
 
 
   Future<void> _selectDate(BuildContext context) async {

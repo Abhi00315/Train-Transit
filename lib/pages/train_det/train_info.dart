@@ -316,26 +316,20 @@ class _TrainInfoState extends State<TrainInfo> {
                     FirebaseFirestore firestore = FirebaseFirestore.instance;
                     DocumentReference userRef = firestore.collection('users').doc(user.uid);
                     
-                    // Generate a new unique ID for the booking
                     String bookingId = generateUniqueId();
-
-                    // Save booking details to Firestore under the user's document
                     DocumentReference bookingRef = userRef.collection('bookings').doc(bookingId);
                     
-                    // Generate a new unique ID for train preferences
                     String trainPrefId = generateUniqueId();
+                    DocumentReference trainPrefRef = bookingRef.collection('train_pref').doc(trainPrefId);
 
                     await firestore.runTransaction((transaction) async {
                       // Create the booking document
                       transaction.set(bookingRef, {
-                        'id': bookingId,
                         'timestamp': FieldValue.serverTimestamp(),
                         // Add other booking details here if needed
                       });
 
                       // Create the train_pref sub-collection
-                      DocumentReference trainPrefRef = bookingRef.collection('train_pref').doc(trainPrefId);
-
                       transaction.set(trainPrefRef, {
                         'id': trainPrefId,
                         'trainName': train['name'],
@@ -347,7 +341,6 @@ class _TrainInfoState extends State<TrainInfo> {
 
                     Navigator.of(context).pop();
 
-                    // Navigate to PaymentPage
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -373,6 +366,9 @@ class _TrainInfoState extends State<TrainInfo> {
     },
   );
 }
+
+
+
 
 
 
