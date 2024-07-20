@@ -319,18 +319,30 @@ class _TrainInfoState extends State<TrainInfo> {
                     // Generate a new unique ID for the booking
                     String bookingId = generateUniqueId();
 
-                    // Save train preferences under 'train_pref' sub-collection of the booking
+                    // Save booking details to Firestore under the user's document
                     DocumentReference bookingRef = userRef.collection('bookings').doc(bookingId);
                     
+                    // Generate a new unique ID for train preferences
                     String trainPrefId = generateUniqueId();
-                    DocumentReference trainPrefRef = bookingRef.collection('train_pref').doc(trainPrefId);
-                    
-                    await trainPrefRef.set({
-                      'id': trainPrefId,
-                      'trainName': train['name'],
-                      'trainNumber': train['number'],
-                      'classType': className,
-                      // Add other relevant train preference details here
+
+                    await firestore.runTransaction((transaction) async {
+                      // Create the booking document
+                      transaction.set(bookingRef, {
+                        'id': bookingId,
+                        'timestamp': FieldValue.serverTimestamp(),
+                        // Add other booking details here if needed
+                      });
+
+                      // Create the train_pref sub-collection
+                      DocumentReference trainPrefRef = bookingRef.collection('train_pref').doc(trainPrefId);
+
+                      transaction.set(trainPrefRef, {
+                        'id': trainPrefId,
+                        'trainName': train['name'],
+                        'trainNumber': train['number'],
+                        'classType': className,
+                        // Add other relevant train preference details here
+                      });
                     });
 
                     Navigator.of(context).pop();
@@ -361,6 +373,8 @@ class _TrainInfoState extends State<TrainInfo> {
     },
   );
 }
+
+
 
 }
 
