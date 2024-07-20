@@ -6,6 +6,15 @@ import 'package:train_transit/components/my_button.dart'; // Update with your ac
 import 'package:train_transit/components/selection/utils.dart'; // Update with your actual import path
 
 class PaymentPage extends StatefulWidget {
+  final String bookingId;
+  final String trainPrefId;
+
+  const PaymentPage({
+    Key? key,
+    required this.bookingId,
+    required this.trainPrefId,
+  }) : super(key: key);
+  
   @override
   _PaymentPageState createState() => _PaymentPageState();
 }
@@ -64,28 +73,24 @@ class _PaymentPageState extends State<PaymentPage> {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
+        FirebaseFirestore firestore = FirebaseFirestore.instance;
+        DocumentReference userRef = firestore.collection('users').doc(user.uid);
+        
+        // Reference to the specific train_pref document
+        DocumentReference trainPrefRef = userRef
+            .collection('bookings')
+            .doc(widget.bookingId)
+            .collection('train_pref')
+            .doc(widget.trainPrefId);
+
         // Generate a new unique ID for the payment
         String paymentId = generateUniqueId();
 
-        // Reference to Firestore instance
-        FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-        // Reference to the user's document
-        DocumentReference userRef = firestore.collection('users').doc(user.uid);
-
-        // Get the latest booking document
-        QuerySnapshot bookingsSnapshot = await userRef.collection('bookings').limit(1).get();
-        DocumentSnapshot bookingDoc = bookingsSnapshot.docs.first;
-
-        // Get the latest train preference document within the booking
-        QuerySnapshot trainPrefsSnapshot = await bookingDoc.reference.collection('train_pref').limit(1).get();
-        DocumentSnapshot trainPrefDoc = trainPrefsSnapshot.docs.first;
-
         // Save payment details under 'payments' sub-collection of the train_pref document
-        DocumentReference paymentRef = trainPrefDoc.reference.collection('payments').doc(paymentId);
+        DocumentReference paymentRef = trainPrefRef.collection('payments').doc(paymentId);
 
         await paymentRef.set({
-          'id': paymentId, // Store the ID as part of the document data
+          'id': paymentId,
           'name': _nameController.text,
           'age': _ageController.text,
           'cardNumber': _cardNumberController.text,
@@ -95,25 +100,19 @@ class _PaymentPageState extends State<PaymentPage> {
           'timestamp': Timestamp.now(),
         });
 
-        // Payment success logic here
-        // ...
-
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Payment successful!')),
         );
 
-        // Navigate to UserType page after a delay
         await Future.delayed(Duration(seconds: 2));
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const UserType()),
         );
       } else {
-        // Handle the case when the user is not authenticated
         print('User not authenticated');
       }
     } catch (e) {
-      // Handle any errors that occur during saving to Firestore
       print('Error saving payment details: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Payment failed. Please try again.')),
