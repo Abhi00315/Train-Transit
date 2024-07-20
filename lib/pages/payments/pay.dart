@@ -74,11 +74,11 @@ class _PaymentPageState extends State<PaymentPage> {
         DocumentReference userRef = firestore.collection('users').doc(user.uid);
 
         // Get the latest booking document
-        QuerySnapshot bookingsSnapshot = await userRef.collection('bookings').limit(1).get();
+        QuerySnapshot bookingsSnapshot = await userRef.collection('bookings').orderBy('timestamp', descending: true).limit(1).get();
         DocumentSnapshot bookingDoc = bookingsSnapshot.docs.first;
 
         // Get the latest train preference document within the booking
-        QuerySnapshot trainPrefsSnapshot = await bookingDoc.reference.collection('train_pref').limit(1).get();
+        QuerySnapshot trainPrefsSnapshot = await bookingDoc.reference.collection('train_pref').orderBy('timestamp', descending: true).limit(1).get();
         DocumentSnapshot trainPrefDoc = trainPrefsSnapshot.docs.first;
 
         // Save payment details under 'payments' sub-collection of the train_pref document

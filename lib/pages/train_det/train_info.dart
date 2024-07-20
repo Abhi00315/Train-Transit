@@ -326,7 +326,7 @@ class _TrainInfoState extends State<TrainInfo> {
 
                       // Save train preferences under 'train_pref' sub-collection of the user's document
                       DocumentReference trainPrefRef = userRef
-                          .collection('super')
+                          .collection('train_pref')
                           .doc(trainPrefId); // Use the generated unique ID
 
                       await trainPrefRef.set({
