@@ -233,4 +233,3 @@ class BookingPageState extends State<BookingPage> {
     );
   }
 }
-
