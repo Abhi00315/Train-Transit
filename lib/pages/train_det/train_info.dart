@@ -319,7 +319,7 @@ class _TrainInfoState extends State<TrainInfo> {
                     // Generate a new unique ID for the booking
                     String bookingId = generateUniqueId();
 
-                    // Save booking details to Firestore under the user's document
+                    // Save booking details to Firestore under the user's documen
                     DocumentReference bookingRef = userRef.collection('bookings').doc(bookingId);
                     
                     // Generate a new unique ID for train preferences
