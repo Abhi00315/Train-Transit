@@ -42,57 +42,58 @@ class BookingPageState extends State<BookingPage> {
   String _travelOption = 'Traveler';
 
   void searchTrains(BuildContext context) async {
-  try {
-    // Get the current authenticated user
-    User? user = FirebaseAuth.instance.currentUser;
+    try {
+      // Get the current authenticated user
+      User? user = FirebaseAuth.instance.currentUser;
 
-    if (user != null) {
-      // Reference to the Firestore instance
-      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      if (user != null) {
+        // Reference to the Firestore instance
+        FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-      // Reference to the user's document
-      DocumentReference userRef = firestore.collection('users').doc(user.uid);
+        // Reference to the user's document
+        DocumentReference userRef = firestore.collection('users').doc(user.uid);
 
-      // Generate a new unique ID for the booking
-      String bookingId = generateUniqueId();
+        // Generate a new unique ID for the booking
+        String bookingId = generateUniqueId();
 
-      // Save booking details to Firestore under the user's document
-      DocumentReference bookingRef = userRef.collection('bookings').doc(bookingId);
+        // Save booking details to Firestore under the user's document
+        DocumentReference bookingRef =
+            userRef.collection('bookings').doc(bookingId);
 
-      await firestore.runTransaction((transaction) async {
-        // Create the booking document with relevant fields
-        transaction.set(bookingRef, {
-          'date': dateController.text.trim(),
-          'from': fromController.text.trim(),
-          'to': toController.text.trim(),
-          'general': generalController.text.trim(),
-          'travelOption': _travelOption,
-          'timestamp': FieldValue.serverTimestamp(),
-        });
+        await firestore.runTransaction((transaction) async {
+          // Create the booking document with relevant fields
+          transaction.set(bookingRef, {
+            'date': dateController.text.trim(),
+            'from': fromController.text.trim(),
+            'to': toController.text.trim(),
+            'general': generalController.text.trim(),
+            'travelOption': _travelOption,
+            'timestamp': FieldValue.serverTimestamp(),
+          });
 
-        // Navigate to the next page when the search button is clicked
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TrainInfo(
-              fromStation: fromController.text.trim(),
-              toStation: toController.text.trim(),
+          // Navigate to the next page when the search button is clicked
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TrainInfo(
+                fromStation: fromController.text.trim(),
+                toStation: toController.text.trim(),
+              ),
             ),
-          ),
+          );
+        });
+      } else {
+        // If the user is not authenticated, show an error messag
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User not authenticated. Please log in.')),
         );
-      });
-    } else {
-      // If the user is not authenticated, show an error message
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('User not authenticated. Please log in.')),
+        SnackBar(content: Text('Failed to book: $e')),
       );
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to book: $e')),
-    );
   }
-}
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
