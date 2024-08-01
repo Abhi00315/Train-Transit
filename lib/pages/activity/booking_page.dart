@@ -83,7 +83,7 @@ class BookingPageState extends State<BookingPage> {
           );
         });
       } else {
-        // If the user is not authenticated, show an error 
+        // If the user is not authenticated, show an 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('User not authenticated. Please log in.')),
         );
